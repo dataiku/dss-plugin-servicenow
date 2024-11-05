@@ -1,0 +1,28 @@
+{
+    "meta" : {
+        "label": "User accounts",
+        "description": "",
+        "icon": "fas fa-puzzle-piece"
+    },
+    "defaultDefinableInline": false,
+    "defaultDefinableAtProjectLevel": true,
+    "pluginParams": [
+    ],
+
+    "params": [
+        {
+            "name": "server_url",
+            "label": "Server URL",
+            "type": "STRING",
+            "description": "my_instance.service-now.com"
+        },
+        {
+            "name": "basic_per_user",
+            "type": "CREDENTIAL_REQUEST",
+            "label": "ServiceNow basic login",
+            "credentialRequestSettings": {
+                "type": "BASIC"
+            }
+        }
+    ]
+}

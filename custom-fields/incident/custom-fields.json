@@ -1,0 +1,100 @@
+{
+    "meta": {
+        "label": "ServiceNow incident",
+        "description": "ServiceNow fields",
+        "icon": "icon-ticket"
+    },
+    "customFields": [
+        {
+            "applyToObjects": {
+                "mode": "SOME",
+                "includedObjectTypes": ["PROJECT", "DATASET", "CONNECTION"]
+            },
+            "field": {
+                "name": "servicenow_sys_id",
+                "label": "Sys ID",
+                "description": "Incident Servicenow sys ID",
+                "type": "STRING",
+                "defaultValue": "",
+                "visibilityCondition": "model.servicenow_incident_status != 'None'"
+            }
+        },
+        {
+            "applyToObjects": {
+                "mode": "SOME",
+                "includedObjectTypes": ["PROJECT", "DATASET", "CONNECTION"]
+            },
+            "field": {
+                "name": "servicenow_number",
+                "label": "Number",
+                "description": "Incident number",
+                "type": "STRING",
+                "defaultValue": "",
+                "visibilityCondition": "model.servicenow_incident_status != 'None'"
+            }
+        },
+        {
+            "applyToObjects": {
+                "mode": "SOME",
+                "includedObjectTypes": ["PROJECT", "DATASET", "CONNECTION"]
+            },
+            "field": {
+                "name": "servicenow_opened_at",
+                "label": "Reported at",
+                "description": "UTC",
+                "type": "STRING",
+                "defaultValue": "",
+                "visibilityCondition": "model.servicenow_incident_status != 'None'"
+            }
+        },
+        {
+            "applyToObjects": {
+                "mode": "SOME",
+                "includedObjectTypes": ["PROJECT", "DATASET", "CONNECTION"]
+            },
+            "field": {
+                "name": "servicenow_incident_status",
+                "label": "Status",
+                "iconInDatasetPreview": "icon-ticket",
+                "type": "SELECT",
+                "defaultValue": "None",
+                "selectChoices": [
+                    {
+                        "value": "None",
+                        "label": "No incident",
+                        "icon": "icon-ok",
+                        "color": "#03A9F4"
+                    },
+                    {
+                        "value": "1",
+                        "label": "New",
+                        "icon": "icon-lock",
+                        "color": "#ce1329"
+                    },
+                    {
+                        "value": "2",
+                        "label": "In Progress"
+                    },
+                    {
+                        "value": "3",
+                        "label": "On Hold"
+                    },
+                    {
+                        "value": "4",
+                        "label": "Resolved",
+                        "icon": "icon-ok",
+                        "color": "#53A802"
+                    },
+                    {
+                        "value": "5",
+                        "label": "Closed"
+                    },
+                    {
+                        "value": "6",
+                        "label": "Canceled"
+                    }
+                ]
+            }
+        }
+    ]
+}

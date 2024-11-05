@@ -1,0 +1,32 @@
+{
+    "meta" : {
+        "label": "Service accounts",
+        "description": "",
+        "icon": "fas fa-puzzle-piece"
+    },
+    "defaultDefinableInline": true,
+    "defaultDefinableAtProjectLevel": true,
+    "pluginParams": [
+    ],
+
+    "params": [
+        {
+            "name": "server_url",
+            "label": "Server URL",
+            "type": "STRING",
+            "description": "my_instance.service-now.com"
+        },
+        {
+            "name": "user_name",
+            "label": "User name",
+            "type": "STRING",
+            "description": ""
+        },
+        {
+            "name": "password",
+            "label": "Server URL",
+            "type": "PASSWORD",
+            "description": ""
+        }
+    ]
+}

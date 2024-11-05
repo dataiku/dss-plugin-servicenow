@@ -1,0 +1,64 @@
+{
+    "meta" : {
+        "label": "ServiceNow table to dataset",
+        "description": "",
+        // icon: must be one of the FontAwesome 5.15.4 icons, complete list here at https://fontawesome.com/v5/docs/
+        "icon": "icon-ticket"
+    },
+    "readable": true,
+    "writable": false,
+    "params": [
+        {
+            "name": "auth_type",
+            "label": "Authentication type",
+            "type": "SELECT",
+            "selectChoices": [
+                {
+                    "value": "basic_per_user",
+                    "label": "User account"
+                },
+                {
+                    "value": "basic_service_account",
+                    "label": "Service account"
+                }
+            ]
+        },
+        {
+            "name": "basic_per_user",
+            "label": "Per user",
+            "type": "PRESET",
+            "parameterSetId": "basic-per-user",
+            "visibilityCondition": "model.auth_type=='basic_per_user'"
+        },
+        {
+            "name": "basic_service_account",
+            "label": "Service account",
+            "type": "PRESET",
+            "parameterSetId": "basic-service-account",
+            "visibilityCondition": "model.auth_type=='basic_service_account'"
+        },
+        {
+            "name": "endpoint",
+            "label": "Table",
+            "type": "SELECT",
+            "selectChoices": [
+                {
+                    "value": "incident",
+                    "label": "Incidents"
+                },
+                {
+                    "value": "concoursepicker",
+                    "label": "Course picker"
+                },
+                {
+                    "value": "change",
+                    "label": "Changes"
+                },
+                {
+                    "value": "catalogmanagement",
+                    "label": "Catalog"
+                }
+            ]
+        }
+    ]
+}
