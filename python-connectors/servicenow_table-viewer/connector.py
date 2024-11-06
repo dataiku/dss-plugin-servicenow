@@ -4,7 +4,7 @@ from servicenow_commons import RecordsLimit
 from safe_logger import SafeLogger
 
 
-logger = SafeLogger("service-now plugin", ["password"])
+logger = SafeLogger("servicenow plugin", ["password"])
 
 
 class ServiceNowConnector(Connector):

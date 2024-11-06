@@ -1,6 +1,6 @@
 {
     "meta": {
-        "label": "ServiceNow incident",
+        "label": "ServiceNow recorded incident",
         "description": "ServiceNow fields",
         "icon": "icon-ticket"
     },
@@ -13,7 +13,7 @@
             "field": {
                 "name": "servicenow_sys_id",
                 "label": "Sys ID",
-                "description": "Incident Servicenow sys ID",
+                "description": "Incident ServiceNow sys ID",
                 "type": "STRING",
                 "defaultValue": "",
                 "visibilityCondition": "model.servicenow_incident_status != 'None'"
@@ -62,36 +62,43 @@
                     {
                         "value": "None",
                         "label": "No incident",
-                        "icon": "icon-ok",
-                        "color": "#03A9F4"
+                        "icon": "icon-sun"
                     },
                     {
                         "value": "1",
                         "label": "New",
-                        "icon": "icon-lock",
+                        "icon": "icon-bug",
                         "color": "#ce1329"
                     },
                     {
                         "value": "2",
-                        "label": "In Progress"
+                        "label": "In Progress",
+                        "icon": "icon-cogs",
+                        "color": "#ce1329"
                     },
                     {
                         "value": "3",
-                        "label": "On Hold"
+                        "label": "On Hold",
+                        "icon": "icon-time",
+                        "color": "#ce1329"
                     },
                     {
                         "value": "4",
                         "label": "Resolved",
-                        "icon": "icon-ok",
+                        "icon": "icon-thumbs-up",
                         "color": "#53A802"
                     },
                     {
                         "value": "5",
-                        "label": "Closed"
+                        "label": "Closed",
+                        "icon": "icon-lock",
+                        "color": "#03A9F4"
                     },
                     {
                         "value": "6",
-                        "label": "Canceled"
+                        "label": "Canceled",
+                        "icon": "icon-ban-circle",
+                        "color": "#03A9F4"
                     }
                 ]
             }

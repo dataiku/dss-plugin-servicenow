@@ -1,13 +1,13 @@
 {
-    "id": "service-now",
+    "id": "servicenow",
     "version": "0.0.1",
     "meta": {
-        "label": "Service now",
+        "label": "ServiceNow",
         "description": "Retrieve ServiceNow tables into Dataiku / send incident reports",
         "author": "Dataiku (Alex Bourret)",
         "icon": "icon-ticket",
         "tags": [],
-        "url": "https://www.dataiku.com/product/plugins/service-now/",
+        "url": "https://www.dataiku.com/product/plugins/servicenow/",
         "licenseInfo": "Apache Software License"
     }
 }

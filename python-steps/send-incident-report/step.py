@@ -8,7 +8,7 @@ from servicenow_commons import (
 from safe_logger import SafeLogger
 
 
-logger = SafeLogger("service-now plugin", ["password"])
+logger = SafeLogger("servicenow plugin", ["password"])
 
 plugin_config = get_plugin_config()
 config = plugin_config.get("config", {})
@@ -24,7 +24,7 @@ project = client.get_project(project_key)
 
 
 for dataset_to_tag in datasets_to_tag:
-    logger.info("Creating a Servicenow ticker for dataset {}".format(dataset_to_tag))
+    logger.info("Creating a ServiceNow ticker for dataset {}".format(dataset_to_tag))
     dataset = project.get_dataset(dataset_to_tag)
     settings = dataset.get_settings()
     current_status = settings.custom_fields.get("servicenow_incident_status", "")
