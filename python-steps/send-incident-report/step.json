@@ -34,6 +34,12 @@
             "visibilityCondition": "model.auth_type=='basic_service_account'"
         },
         {
+            "name": "datasets_to_tag",
+            "label": "Datasets",
+            "description": "Datasets to tag as faulty",
+            "type": "DATASETS"
+        },
+        {
             "name": "caller_id",
             "label": "Caller ID",
             "type": "STRING"
