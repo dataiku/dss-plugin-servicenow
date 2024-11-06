@@ -7,6 +7,7 @@
     "params": [
         {
             "name": "auth_type",
+            "label": "Authentication type",
             "type": "SELECT",
             "selectChoices": [
                 {
