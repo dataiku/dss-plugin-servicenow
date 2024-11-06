@@ -1,6 +1,6 @@
 # ServiceNow Plugin
 
-This Dataiku DSS plugin provides a read / write connector to interact with [Servicenow](https://www.servicenow.com/) tables.
+This Dataiku DSS plugin provides a read connector to interact with [Servicenow](https://www.servicenow.com/) tables.
 
 ### Licence
 
