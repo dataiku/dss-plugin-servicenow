@@ -15,11 +15,11 @@ Once this preset is create, each DSS user that requires accessing to the Service
 
 ## Read a ServiceNow table
 
-In the flow, click on +Dataset > Plugins/ServiceNow > ServiceNow table to dataset. Select the appropriate authentication type and preset and the table to retrieve. Press `Test & get schema` and `Create`
+In the flow, click on *+Dataset > Plugins/ServiceNow > ServiceNow* table to dataset. Select the appropriate authentication type and preset and the table to retrieve. Press `Test & get schema` and `Create`
 
 ## Create a incident ticket on faulty scenario
 
-In the scenario building the target dataset, add a final step with *Add step > ServiceNow / Send a ServiceNow incident*. Select the appropriate authentication type and preset, and fill in the standard message template to be sent to the ServiceNow operator. This template can contain variables such as ${projectKey}.
+In the scenario building the target dataset, add a final step with *Add step > ServiceNow / Send a ServiceNow incident*. Select the appropriate authentication type and preset, and fill in the standard message template to be sent to the ServiceNow operator. This template can contain variables such as ${projectKey}. Finally, in the *Run this step selector*, pick the *If some prior step failed* option.
 
 ## Check incident resolution from within DSS
 
