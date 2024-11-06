@@ -17,7 +17,7 @@
             "description": "my_instance.service-now.com"
         },
         {
-            "name": "user_name",
+            "name": "user",
             "label": "User name",
             "type": "STRING",
             "description": ""
