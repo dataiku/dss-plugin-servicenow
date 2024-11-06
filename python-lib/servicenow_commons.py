@@ -1,7 +1,11 @@
 def get_user_password_server_from_config(config):
     auth_type = config.get("auth_type", "basic_per_user")
     credentials = config.get(auth_type, {})
-    return credentials.get("user_name", ""), credentials.get("password", ""), credentials.get("server_url", "")
+    if auth_type == "basic_per_user":
+        basic_per_user = credentials.get("basic_per_user")
+        return basic_per_user.get("user", ""), basic_per_user.get("password", ""), credentials.get("server_url", "")
+    else:
+        return credentials.get("user", ""), credentials.get("password", ""), credentials.get("server_url", "")
 
 
 def get_failed_steps(scenario_variables):
@@ -65,6 +69,15 @@ def extract_faulty_datasets_from_failed_step(failed_step):
         if dataset_is_faulty:
             faulty_datasets.append(dataset_name)
     return faulty_datasets
+
+
+def get_servicenow_incident_status(incident_level):
+    incident_levels = {
+        None: "No incident", "": "No incident", "None": "No incident",
+        "1": "New", "2": "Assigned", "12": "Referred", "4": "Awaiting User Info",
+        "5": "Awaiting Evidence", "10": "Awaiting Change", "8": "Awaiting Vendor", "11": "Awaiting Vendor Change", "6": "Resolved", "7": "Closed"
+    }
+    return incident_levels.get(incident_level, "Unknown")
 
 
 class RecordsLimit():
