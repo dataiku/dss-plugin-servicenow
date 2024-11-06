@@ -24,7 +24,7 @@
         },
         {
             "name": "password",
-            "label": "Server URL",
+            "label": "Password",
             "type": "PASSWORD",
             "description": ""
         }
