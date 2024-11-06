@@ -6,24 +6,28 @@ logger = SafeLogger("api-client")
 
 
 class APIClient():
-    def __init__(self, server_url, auth, pagination=None, number_of_retries=None):
+    def __init__(self, server_url, auth, pagination=None, max_number_of_retries=None, should_fail_silently=False):
         self.session = requests.Session()
         self.server_url = server_url
         self.session.auth = auth
-        self.number_of_tries = None
+        self.number_of_retries = None
         self.page_offset = None
         self.pagination = pagination or DefaultPagination()
-        self.number_of_retries = number_of_retries or 1
+        self.max_number_of_retries = max_number_of_retries or 1
+        self.should_fail_silently = should_fail_silently
 
     def get(self, endpoint, params=None):
         full_url = self.get_full_url(endpoint)
         response = None
         while self.should_try_again(response):
             try:
+                logger.info("geting url={}, params={}".format(full_url, params))
                 response = self.session.get(full_url, params=params)
             except Exception as error:
-                logger.error("Error on get: {}".format(error))
-        dispay_response_error(response)
+                error_message = "Error on get: {}".format(error)
+                logger.error(error_message)
+                self.raise_if_necessary(error_message)
+        display_response_error(response)
         json_response = response.json()
         return json_response
 
@@ -33,7 +37,7 @@ class APIClient():
             full_url,
             json=json
         )
-        dispay_response_error(response)
+        display_response_error(response)
         return response
 
     def get_full_url(self, endpoint):
@@ -52,19 +56,28 @@ class APIClient():
 
     def should_try_again(self, response):
         if response is not None:
-            self.number_of_tries = None
+            self.number_of_retries = None
             return False
-        if self.number_of_tries is None:
+        if self.number_of_retries is None:
             logger.warning("Retrying")
-            self.number_of_tries = 1
+            self.number_of_retries = 1
         else:
-            logger.warning("Retry {}".format(self.number_of_tries))
-            self.number_of_tries += 1
-        if self.number_of_tries > self.number_of_retries:
-            self.number_of_tries = None
+            logger.warning("Retry {}".format(self.number_of_retries))
+            self.number_of_retries += 1
+        if self.number_of_retries > self.max_number_of_retries:
+            self.number_of_retries = None
             logger.error("Max number of retries")
             return False
         return True
+
+    def raise_if_necessary(self, error_message):
+        if self.should_fail_silently:
+            return
+        else:
+            if self.max_number_of_retries == self.max_number_of_retries:
+                raise Exception(error_message)
+            else:
+                return
 
 
 def get_next_row_from_response(response, data_path=None):
@@ -79,8 +92,11 @@ def get_next_row_from_response(response, data_path=None):
             data = data.get(data_path_token, {})
     else:
         raise Exception("get_next_row_from_response: data_path can only be string or list")
-    for row in data:
-        yield row
+    if isinstance(data, list):
+        for row in data:
+            yield row
+    else:
+        yield data
 
 
 class DefaultPagination():
@@ -102,10 +118,10 @@ class DefaultPagination():
         return None
 
 
-def dispay_response_error(response):
+def display_response_error(response):
     if response is None:
         logger.error("Empty response")
-    if isinstance(response, requests.Response):
+    elif isinstance(response, requests.Response):
         status_code = response.status_code
         logger.info("status_code={}".format(status_code))
         if status_code >= 400:
