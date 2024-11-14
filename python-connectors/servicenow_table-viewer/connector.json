@@ -56,6 +56,10 @@
                 {
                     "value": "catalogmanagement",
                     "label": "Catalog"
+                },
+                {
+                    "value": "problem",
+                    "label": "Problems"
                 }
             ]
         }

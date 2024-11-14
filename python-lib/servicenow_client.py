@@ -27,6 +27,10 @@ ENDPOINTS_DETAILS = {
         "endpoint": "api/sn_sc/v1/servicecatalog/cart",
         "data_path": ["result"]
     },
+    "problem": {
+        "endpoint": "api/now/table/problem",
+        "data_path": ["result"]
+    },
 }
 DEFAULT_ENDPOINT_DETAILS = ENDPOINTS_DETAILS.get("incident")
 
