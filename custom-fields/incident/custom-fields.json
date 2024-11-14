@@ -72,7 +72,7 @@
                     },
                     {
                         "value": "2",
-                        "label": "In Progress",
+                        "label": "Assigned",
                         "icon": "icon-cogs",
                         "color": "#ce1329"
                     },
@@ -84,21 +84,51 @@
                     },
                     {
                         "value": "4",
-                        "label": "Resolved",
-                        "icon": "icon-thumbs-up",
+                        "label": "Awaiting User Info",
+                        "icon": "icon-bug",
                         "color": "#53A802"
                     },
                     {
                         "value": "5",
-                        "label": "Closed",
+                        "label": "Awaiting Evidence",
                         "icon": "icon-lock",
                         "color": "#03A9F4"
                     },
                     {
                         "value": "6",
-                        "label": "Canceled",
-                        "icon": "icon-ban-circle",
-                        "color": "#03A9F4"
+                        "label": "Resolved",
+                        "icon": "icon-thumbs-up",
+                        "color": "#53A802"
+                    },
+                    {
+                        "value": "7",
+                        "label": "Closed",
+                        "icon": "icon-lock",
+                        "color": "#53A802"
+                    },
+                    {
+                        "value": "8",
+                        "label": "Awaiting Vendor",
+                        "icon": "icon-time",
+                        "color": "#f49c03"
+                    },
+                    {
+                        "value": "10",
+                        "label": "Awaiting Change",
+                        "icon": "icon-time",
+                        "color": "#f49c03"
+                    },
+                    {
+                        "value": "11",
+                        "label": "Awaiting Vendor Change",
+                        "icon": "icon-time",
+                        "color": "#f49c03"
+                    },
+                    {
+                        "value": "12",
+                        "label": "Referred",
+                        "icon": "icon-bug",
+                        "color": "#ce1329"
                     }
                 ]
             }
