@@ -59,7 +59,6 @@ class MyRunnable(Runnable):
                     last_update = None
                     new_status = None
                     for incident in incidents:
-                        print("ALX:9:{}".format(incident))
                         last_update = incident.get("sys_updated_on")
                         logger.info("updated on {}".format(last_update))
                         new_status = incident.get("state")
