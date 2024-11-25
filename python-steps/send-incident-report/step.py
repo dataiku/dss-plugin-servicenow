@@ -4,6 +4,7 @@ from servicenow_client import ServiceNowClient
 from dataiku.scenario import Scenario
 from servicenow_commons import (
     get_servicenow_incident_status,
+    has_no_incident,
 )
 from safe_logger import SafeLogger
 
@@ -28,7 +29,7 @@ for dataset_to_tag in datasets_to_tag:
     dataset = project.get_dataset(dataset_to_tag)
     settings = dataset.get_settings()
     current_status = settings.custom_fields.get("servicenow_incident_status", "")
-    if current_status in [None, "None", "", "6", "7"]:
+    if has_no_incident(current_status):
         # No incident ticket on this dataset at this point, let's create one
         logger.warning("Dataset {} current incident state is {}. Creating a new incident.".format(
                 dataset_to_tag,

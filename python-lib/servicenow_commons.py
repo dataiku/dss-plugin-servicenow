@@ -80,6 +80,12 @@ def get_servicenow_incident_status(incident_level):
     return incident_levels.get(incident_level, "Unknown")
 
 
+def has_no_incident(current_status):
+    if current_status in [None, "None", "", "6", "7"]:
+        return True
+    return False
+
+
 class RecordsLimit():
     def __init__(self, records_limit=-1):
         self.has_no_limit = (records_limit == -1)
