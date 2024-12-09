@@ -48,12 +48,20 @@
         {
             "name": "short_description",
             "label": "Short description",
+            "defaultValue": "Something wrong with project ${projectKey}",
             "type": "STRING"
         },
         {
             "name": "description",
             "label": "Description",
+            "defaultValue": "There was an issue while building {{dataset}} in the project {{projectKey}}.\nThe impacted scenario run can be found here : {{scenarioRunURL}}.",
             "type": "TEXTAREA"
+        },
+        {
+            "name": "attach_scenario_variables",
+            "label": "Attach scenario variables",
+            "description": "Scenario variables sent in the ticket as attachement file",
+            "type": "BOOLEAN"
         }
     ]
 }

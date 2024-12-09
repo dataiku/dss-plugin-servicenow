@@ -71,3 +71,18 @@ class ServiceNowClient():
             }
         )
         return response
+
+    def attach_document(self, sys_id, file_name, data_to_attach):
+        response = self.client.post(
+            "api/now/attachment/file",
+            data=data_to_attach,
+            params={
+                "table_name": "incident",
+                "table_sys_id": sys_id,
+                "file_name": file_name
+            },
+            headers={
+                "Content-Type": "text/plain"
+            }
+        )
+        return response

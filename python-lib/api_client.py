@@ -31,11 +31,15 @@ class APIClient():
         json_response = response.json()
         return json_response
 
-    def post(self, endpoint, json=None):
+    def post(self, endpoint, params=None, json=None, data=None, headers=None, files=None):
         full_url = self.get_full_url(endpoint)
         response = self.session.post(
             full_url,
-            json=json
+            headers=headers,
+            params=params,
+            json=json,
+            data=data,
+            files=files
         )
         display_response_error(response)
         return response
