@@ -11,7 +11,7 @@ class ServiceNowConnector(Connector):
 
     def __init__(self, config, plugin_config):
         Connector.__init__(self, config, plugin_config)
-        logger.info("Starting ServiceNow plugin v0.0.3 with config:{}".format(logger.filter_secrets(config)))
+        logger.info("Starting ServiceNow plugin v0.0.4 with config:{}".format(logger.filter_secrets(config)))
         self.client = ServiceNowClient(config)
         self.endpoint = config.get("endpoint", "incident")
 
