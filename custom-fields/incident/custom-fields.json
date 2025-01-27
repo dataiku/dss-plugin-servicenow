@@ -8,7 +8,7 @@
         {
             "applyToObjects": {
                 "mode": "SOME",
-                "includedObjectTypes": ["PROJECT", "DATASET", "CONNECTION"]
+                "includedObjectTypes": ["PROJECT", "DATASET"]
             },
             "field": {
                 "name": "servicenow_sys_id",
@@ -22,7 +22,7 @@
         {
             "applyToObjects": {
                 "mode": "SOME",
-                "includedObjectTypes": ["PROJECT", "DATASET", "CONNECTION"]
+                "includedObjectTypes": ["PROJECT", "DATASET"]
             },
             "field": {
                 "name": "servicenow_number",
@@ -36,7 +36,7 @@
         {
             "applyToObjects": {
                 "mode": "SOME",
-                "includedObjectTypes": ["PROJECT", "DATASET", "CONNECTION"]
+                "includedObjectTypes": ["PROJECT", "DATASET"]
             },
             "field": {
                 "name": "servicenow_opened_at",
@@ -50,7 +50,7 @@
         {
             "applyToObjects": {
                 "mode": "SOME",
-                "includedObjectTypes": ["PROJECT", "DATASET", "CONNECTION"]
+                "includedObjectTypes": ["PROJECT", "DATASET"]
             },
             "field": {
                 "name": "servicenow_incident_status",
