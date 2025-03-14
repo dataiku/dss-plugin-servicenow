@@ -16,7 +16,7 @@ class APIClient():
         self.max_number_of_retries = max_number_of_retries or 1
         self.should_fail_silently = should_fail_silently
 
-    def get(self, endpoint, params=None):
+    def get(self, endpoint, params=None, can_raise=False):
         full_url = self.get_full_url(endpoint)
         response = None
         while self.should_try_again(response):
@@ -27,11 +27,11 @@ class APIClient():
                 error_message = "Error on get: {}".format(error)
                 logger.error(error_message)
                 self.raise_if_necessary(error_message)
-        display_response_error(response)
+        display_response_error(response, can_raise=can_raise)
         json_response = response.json()
         return json_response
 
-    def post(self, endpoint, params=None, json=None, data=None, headers=None, files=None):
+    def post(self, endpoint, params=None, json=None, data=None, headers=None, files=None, can_raise=False):
         full_url = self.get_full_url(endpoint)
         response = self.session.post(
             full_url,
@@ -41,7 +41,7 @@ class APIClient():
             data=data,
             files=files
         )
-        display_response_error(response)
+        display_response_error(response, can_raise=can_raise)
         return response
 
     def get_full_url(self, endpoint):
@@ -52,7 +52,7 @@ class APIClient():
         response = None
         items_retrieved = 0
         while self.pagination.has_next_page(response, items_retrieved):
-            response = self.get(endpoint, params=self.pagination.get_paging_parameters())
+            response = self.get(endpoint, params=self.pagination.get_paging_parameters(), can_raise=True)
             items_retrieved = 0
             for row in get_next_row_from_response(response, data_path):
                 items_retrieved += 1
@@ -122,7 +122,7 @@ class DefaultPagination():
         return None
 
 
-def display_response_error(response):
+def display_response_error(response, can_raise=False):
     if response is None:
         logger.error("Empty response")
     elif isinstance(response, requests.Response):
@@ -130,5 +130,17 @@ def display_response_error(response):
         logger.info("status_code={}".format(status_code))
         if status_code >= 400:
             logger.error("Error {}. Dumping response:{}".format(status_code, response.content))
+            # b'{"error":{"message":"com.glide.sys.TransactionCancelledException: Transaction cancelled: maximum execution time exceeded","detail":""},"status":"failure"}'
+            if can_raise:
+                error_message = try_decode(response)
+                raise Exception("Error {}: {}".format(status_code, error_message))
     else:
         logger.error("Not a requests.Response object")
+
+def try_decode(response):
+    json_message = {}
+    try:
+        json_message = response.json()
+    except:
+        logger.error("Could not decode error message")
+    return json_message.get("error", {}).format("message")

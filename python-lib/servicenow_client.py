@@ -42,9 +42,9 @@ def get_sn_endpoint_details(endpoint_name):
 
 class ServiceNowClient():
     def __init__(self, config):
-        user, password, server_url = get_user_password_server_from_config(config)
+        user, password, self.server_url = get_user_password_server_from_config(config)
         self.client = APIClient(
-            server_url=server_url,
+            server_url=self.server_url,
             auth=(user, password),
             pagination=ServiceNowPagination(),
             max_number_of_retries=MAX_NUMBER_OR_RETRIES
@@ -86,3 +86,14 @@ class ServiceNowClient():
             }
         )
         return response
+
+    def get_issue_url(self, response):
+        sys_id = response.get("result", response).get("sys_id")
+        return "/".join(
+            [
+                self.server_url,
+                "now/nav/ui/classic/params/target/incident.do?sys_id={}".format(
+                    sys_id
+                )
+            ]
+        )
