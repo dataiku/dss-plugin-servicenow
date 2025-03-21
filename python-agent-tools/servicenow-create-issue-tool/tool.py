@@ -43,14 +43,9 @@ class ServicenowCreateIssueTool(BaseAgentTool):
         json_response = response.json()
         created_issue = json_response.get("result", {})
 
-        if isinstance(created_issue, dict):
-            return { 
-                "output" : 'Issue created: {} available at {}'.format(
-                    created_issue.get("number"),
-                    self.client.get_issue_url(json_response)
-                )
-            }
-        else:
-            return {
-                "output": created_issue
-            }
+        return { 
+            "output" : 'Issue created: {} available at {}'.format(
+                created_issue.get("number"),
+                self.client.get_issue_url(json_response)
+            )
+        }

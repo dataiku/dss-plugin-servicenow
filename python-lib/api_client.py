@@ -130,7 +130,6 @@ def display_response_error(response, can_raise=False):
         logger.info("status_code={}".format(status_code))
         if status_code >= 400:
             logger.error("Error {}. Dumping response:{}".format(status_code, response.content))
-            # b'{"error":{"message":"com.glide.sys.TransactionCancelledException: Transaction cancelled: maximum execution time exceeded","detail":""},"status":"failure"}'
             if can_raise:
                 error_message = try_decode(response)
                 raise Exception("Error {}: {}".format(status_code, error_message))
@@ -143,4 +142,7 @@ def try_decode(response):
         json_message = response.json()
     except:
         logger.error("Could not decode error message")
-    return json_message.get("error", {}).format("message")
+    message = json_message.get("error", {})
+    if isinstance(message, dict) and "error" in message:
+        message = message.get("message")
+    return message

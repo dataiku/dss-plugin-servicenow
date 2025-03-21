@@ -60,7 +60,6 @@ class ServiceNowClient():
             yield row
 
     def post_incident(self, short_description=None, description=None, caller_id=None):
-        #  https://INSTANCENAME.service-now.com/api/now/table/incident
         logger.info("post_incident:short_description={}, caller_id={}".format(short_description, caller_id))
         response = self.client.post(
             "api/now/table/incident",
