@@ -122,7 +122,7 @@ class DefaultPagination():
         return None
 
 
-def display_response_error(response, can_raise=False):
+def display_response_error(response):
     if response is None:
         logger.error("Empty response")
     elif isinstance(response, requests.Response):
@@ -130,19 +130,5 @@ def display_response_error(response, can_raise=False):
         logger.info("status_code={}".format(status_code))
         if status_code >= 400:
             logger.error("Error {}. Dumping response:{}".format(status_code, response.content))
-            if can_raise:
-                error_message = try_decode(response)
-                raise Exception("Error {}: {}".format(status_code, error_message))
     else:
         logger.error("Not a requests.Response object")
-
-def try_decode(response):
-    json_message = {}
-    try:
-        json_message = response.json()
-    except:
-        logger.error("Could not decode error message")
-    message = json_message.get("error", {})
-    if isinstance(message, dict) and "error" in message:
-        message = message.get("message")
-    return message
