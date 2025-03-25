@@ -120,6 +120,7 @@ def format_template(template, **kwargs):
         formated = formated.replace("{{{{{}}}}}".format(key), str(replacement))
     return formated
 
+
 def is_string(data):
     data_type = type(data).__name__
     return data_type in ["str", "unicode"]
