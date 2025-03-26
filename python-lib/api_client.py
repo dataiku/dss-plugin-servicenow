@@ -16,7 +16,7 @@ class APIClient():
         self.max_number_of_retries = max_number_of_retries or 1
         self.should_fail_silently = should_fail_silently
 
-    def get(self, endpoint, params=None, can_raise=False):
+    def get(self, endpoint, params=None):
         full_url = self.get_full_url(endpoint)
         response = None
         while self.should_try_again(response):
@@ -27,11 +27,11 @@ class APIClient():
                 error_message = "Error on get: {}".format(error)
                 logger.error(error_message)
                 self.raise_if_necessary(error_message)
-        display_response_error(response, can_raise=can_raise)
+        display_response_error(response)
         json_response = response.json()
         return json_response
 
-    def post(self, endpoint, params=None, json=None, data=None, headers=None, files=None, can_raise=False):
+    def post(self, endpoint, params=None, json=None, data=None, headers=None, files=None):
         full_url = self.get_full_url(endpoint)
         response = self.session.post(
             full_url,
@@ -41,7 +41,7 @@ class APIClient():
             data=data,
             files=files
         )
-        display_response_error(response, can_raise=can_raise)
+        display_response_error(response)
         return response
 
     def get_full_url(self, endpoint):
@@ -52,7 +52,7 @@ class APIClient():
         response = None
         items_retrieved = 0
         while self.pagination.has_next_page(response, items_retrieved):
-            response = self.get(endpoint, params=self.pagination.get_paging_parameters(), can_raise=True)
+            response = self.get(endpoint, params=self.pagination.get_paging_parameters())
             items_retrieved = 0
             for row in get_next_row_from_response(response, data_path):
                 items_retrieved += 1
