@@ -1,5 +1,9 @@
 # Changelog
 
+## [Version 0.0.5](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.5) - Feature release - 2025-03-27
+
+- Add a agent tool for ticket creation
+
 ## [Version 0.0.4](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.4) - Feature release - 2025-01-27
 
 - Removing service now custom fields from connection panels
