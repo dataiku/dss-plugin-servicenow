@@ -31,7 +31,7 @@ class APIClient():
         json_response = response.json()
         return json_response
 
-    def post(self, endpoint, params=None, json=None, data=None, headers=None, files=None):
+    def post(self, endpoint, params=None, json=None, data=None, headers=None, files=None, can_raise=False):
         full_url = self.get_full_url(endpoint)
         response = self.session.post(
             full_url,
@@ -41,7 +41,7 @@ class APIClient():
             data=data,
             files=files
         )
-        display_response_error(response)
+        display_response_error(response, can_raise=can_raise)
         return response
 
     def get_full_url(self, endpoint):
@@ -122,7 +122,7 @@ class DefaultPagination():
         return None
 
 
-def display_response_error(response):
+def display_response_error(response, can_raise=False):
     if response is None:
         logger.error("Empty response")
     elif isinstance(response, requests.Response):
@@ -130,5 +130,7 @@ def display_response_error(response):
         logger.info("status_code={}".format(status_code))
         if status_code >= 400:
             logger.error("Error {}. Dumping response:{}".format(status_code, response.content))
+            if can_raise:
+                raise Exception("Error {}".format(response.status_code))
     else:
         logger.error("Not a requests.Response object")

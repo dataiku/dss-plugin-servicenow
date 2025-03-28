@@ -1,5 +1,9 @@
 from dataiku.llm.agent_tools import BaseAgentTool
 from servicenow_client import ServiceNowClient
+from safe_logger import SafeLogger
+
+
+logger = SafeLogger("servicenow plugin", ["password"])
 
 
 class ServicenowCreateIssueTool(BaseAgentTool):
@@ -22,6 +26,14 @@ class ServicenowCreateIssueTool(BaseAgentTool):
                     "description": {
                         "type": "string",
                         "description": "The issue description"
+                    },
+                    "impact": {
+                        "type": "int",
+                        "description": "The issue impact. Should be a integer between 1 and 3. Optional."
+                    },
+                    "urgency": {
+                        "type": "int",
+                        "description": "The issue urgency. Should be a integer between 1 and 3. Optional."
                     }
                 },
                 "required": ["summary", "description"]
@@ -29,20 +41,32 @@ class ServicenowCreateIssueTool(BaseAgentTool):
         }
 
     def invoke(self, input, trace):
+        logger.info("servicenow tool invoked with {}".format(input))
         args = input.get("input", {})
         summary = args.get("summary")
         description = args.get("description")
-
-        response = self.client.post_incident(
-            short_description=summary,
-            description=description
-        )
-        json_response = response.json()
-        created_issue = json_response.get("result", {})
-
-        return {
-            "output": 'Issue created: {} available at {}'.format(
-                created_issue.get("number"),
-                self.client.get_issue_url(json_response)
+        impact = args.get("impact")
+        urgency = args.get("urgency")
+        try:
+            response = self.client.post_incident(
+                short_description=summary,
+                description=description,
+                impact=impact,
+                urgency=urgency,
+                can_raise=True
             )
+            json_response = response.json()
+        except Exception as error:
+            logger.error("There was an error '{}' while creating the issue".format(error))
+            return {
+                "output": "There was a problem while creating the issue ticket: {}".format(error)
+            }
+        created_issue = json_response.get("result", {})
+        output = 'Issue created: {} available at {}'.format(
+            created_issue.get("number"),
+            self.client.get_issue_url(json_response)
+        )
+        logger.info("servicenow tool output: {}".format(output))
+        return {
+            "output": output
         }
