@@ -1,4 +1,4 @@
-from servicenow_commons import get_user_password_server_from_config
+from servicenow_commons import get_user_password_server_from_config, is_valid_level
 from servicenow_pagination import ServiceNowPagination
 from safe_logger import SafeLogger
 from api_client import APIClient
@@ -59,15 +59,21 @@ class ServiceNowClient():
         for row in self.get_next_row("incident"):
             yield row
 
-    def post_incident(self, short_description=None, description=None, caller_id=None):
+    def post_incident(self, short_description=None, description=None, caller_id=None, impact=None, urgency=None, can_raise=False):
         logger.info("post_incident:short_description={}, caller_id={}".format(short_description, caller_id))
+        json = {
+            "short_description": short_description,
+            "description": description,
+            "caller_id": caller_id
+        }
+        if is_valid_level(impact):
+            json["impact"] = impact
+        if is_valid_level(urgency):
+            json["urgency"] = urgency
         response = self.client.post(
             "api/now/table/incident",
-            json={
-                "short_description": short_description,
-                "description": description,
-                "caller_id": caller_id
-            }
+            json=json,
+            can_raise=can_raise
         )
         return response
 
