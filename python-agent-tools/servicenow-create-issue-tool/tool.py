@@ -29,11 +29,11 @@ class ServicenowCreateIssueTool(BaseAgentTool):
                     },
                     "impact": {
                         "type": "int",
-                        "description": "The issue impact. Should be a integer between 1 and 3. Optional."
+                        "description": "The impact code. Should be 1, 2 or 3, and is set according to specific rules to follow. Optional."
                     },
                     "urgency": {
                         "type": "int",
-                        "description": "The issue urgency. Should be a integer between 1 and 3. Optional."
+                        "description": "The urgency code. Should be 1, 2 or 3, and is set according to specific rules to follow. Optional."
                     }
                 },
                 "required": ["summary", "description"]
