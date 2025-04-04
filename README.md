@@ -30,6 +30,18 @@ As soon as an incident has been sent to ServiceNow, it is linked to all the data
 
 From the project, click *... > Macros > servicenow > Refresh incidents status*, select the appropriate authentication type and preset, and press `Run macro`. This will refresh the ticket status for all the datasets present in the project. This macro can be run periodically by using a scenario and running the macro from within a step.
 
+## Use with a LLM agent
+
+This plugin can be used as a tool by an agent to create ServiceNow issues. This requires Dataiku >= 12.6.2.
+
+### Example Use Case: Create Issues Based on User Input
+
+In this example, we aim to process a dataset of messages from user tickets and create ServiceNow issues if necessary.
+- First, we need to create the agent tool. In the project's flow, click on **Analysis** > **Agent tools** > **+New agent tool** > **Create a ServiceNow issue**. Name the identifier and the agent.
+- Then, we can create the actual agent. Click on **+Other** > **Generative AI** > **Visual Agent**, name the agent, click on v1, and add the tool (**+Add tool**) created in the previous step. In the agent's *Additional prompt* section, describe what are your specifications on what the parameters in the ticket should contain. The agent tool can fill in the following parameters: **description**, **summary**, **emergency** and **impact**. An example of specification could be *The impact should be set to 1 only if the problem impact production*
+- Once this is done, the agent can be used in place of an LLM in your prompt and LLM settings. For instance, a simple LLM recipe with the prompt *You are an IT agent and your mission is to write ServiceNow ticket if the user's message requires it.*
+![A simple Dataiku flow using a ServiceNow issue creation agent tool](images/simple_flow_using_servicenow_agent.jpg)
+
 ### License
 
 Copyright 2024 Dataiku SAS
