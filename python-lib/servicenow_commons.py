@@ -1,3 +1,8 @@
+from safe_logger import SafeLogger
+
+logger = SafeLogger("servicenow plugin", ["password"])
+
+
 def get_user_password_server_from_config(config):
     auth_type = config.get("auth_type", "basic_per_user")
     credentials = config.get(auth_type, {})
@@ -124,3 +129,20 @@ def format_template(template, **kwargs):
 def is_string(data):
     data_type = type(data).__name__
     return data_type in ["str", "unicode"]
+
+
+def is_valid_level(string_level):
+    # Check that:
+    # - Not None
+    # - Valid int
+    # - Value between 1-3
+    if string_level:
+        if isinstance(string_level, str) and not string_level.isdigit():
+            return False
+        try:
+            level = int(string_level)
+            if 0 < level < 4:
+                return True
+        except Exception as error:
+            logger.error("Could not convert level '{}' into int: {}".format(string_level, error))
+    return False
