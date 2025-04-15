@@ -1,5 +1,9 @@
 # Changelog
 
+## [Version 0.0.7](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.7) - Feature release - 2025-04-15
+
+- Moving custom-fields to an other plugin
+
 ## [Version 0.0.6](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.6) - Feature release - 2025-03-28
 
 - Adding impact and urgency levels to servicenow issues created by the agent tool
