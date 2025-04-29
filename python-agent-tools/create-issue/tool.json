@@ -2,7 +2,8 @@
     "id": "create-servicenow-issue",
     "meta": {
         "icon": "icon-ticket",
-        "label": "Create a Servicenow Issue"
+        "label": "Create Servicenow Issue",
+        "description": "Create a ServiceNow issue based on user input"
     },
     
     "params" : [
