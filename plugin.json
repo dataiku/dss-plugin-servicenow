@@ -6,8 +6,9 @@
         "description": "Retrieve ServiceNow tables into Dataiku / send incident reports",
         "author": "Dataiku (Alex Bourret)",
         "icon": "icon-ticket",
-        "tags": [],
+        "tags": ["Connector", "Generative AI", "Agents", "Tools"],
         "url": "https://www.dataiku.com/product/plugins/servicenow/",
-        "licenseInfo": "Apache Software License"
+        "licenseInfo": "Apache Software License",
+        "supportLevel": "NOT_SUPPORTED"
     }
 }
