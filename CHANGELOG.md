@@ -1,5 +1,9 @@
 # Changelog
 
+## [Version 0.0.8](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.8) - Feature release - 2025-04-30
+
+- Adding tool params, inputs, and outputs to trace
+
 ## [Version 0.0.7](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.7) - Feature release - 2025-04-30
 
 - Moving custom-fields to an other plugin

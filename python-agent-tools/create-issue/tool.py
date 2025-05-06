@@ -43,6 +43,13 @@ class ServicenowCreateIssueTool(BaseAgentTool):
     def invoke(self, input, trace):
         logger.info("servicenow tool invoked with {}".format(input))
         args = input.get("input", {})
+
+        # Log inputs and config to trace
+        trace.span["name"] = "SERVICENOW_CREATE_ISSUE_TOOL_CALL"
+        for key, value in args.items():
+            trace.inputs[key] = value
+        trace.attributes["config"] = self.config
+
         summary = args.get("summary")
         description = args.get("description")
         impact = args.get("impact")
@@ -67,6 +74,10 @@ class ServicenowCreateIssueTool(BaseAgentTool):
             self.client.get_issue_url(json_response)
         )
         logger.info("servicenow tool output: {}".format(output))
+
+        # Log outputs to trace
+        trace.outputs["output"] = output
+
         return {
             "output": output
         }
