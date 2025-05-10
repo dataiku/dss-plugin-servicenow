@@ -1,5 +1,9 @@
 # Changelog
 
+## [Version 0.0.9](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.8) - Bug fix release - 2025-05-12
+
+- Fixing trace logging
+
 ## [Version 0.0.8](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.8) - Feature release - 2025-04-30
 
 - Adding tool params, inputs, and outputs to trace
