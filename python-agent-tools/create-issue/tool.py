@@ -48,12 +48,13 @@ class ServicenowCreateIssueTool(BaseAgentTool):
         trace.span["name"] = "SERVICENOW_CREATE_ISSUE_TOOL_CALL"
         for key, value in args.items():
             trace.inputs[key] = value
-        trace.attributes["config"] = self.config
+        trace.attributes["config"] = {"servicenow_server_url": self.client.server_url}
 
         summary = args.get("summary")
         description = args.get("description")
         impact = args.get("impact")
         urgency = args.get("urgency")
+
         try:
             response = self.client.post_incident(
                 short_description=summary,
