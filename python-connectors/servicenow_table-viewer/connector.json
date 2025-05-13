@@ -2,7 +2,7 @@
     "meta" : {
         "label": "ServiceNow table to dataset",
         "description": "",
-        "icon": "icon-ticket"
+        "icon": "icon-ticket dku-icon-servicenow"
     },
     "readable": true,
     "writable": false,
