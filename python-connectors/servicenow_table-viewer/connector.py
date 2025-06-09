@@ -14,6 +14,8 @@ class ServiceNowConnector(Connector):
         logger.info("Starting ServiceNow plugin v0.0.6 with config:{}".format(logger.filter_secrets(config)))
         self.client = ServiceNowClient(config)
         self.endpoint = config.get("endpoint", "incident")
+        if self.endpoint == "_dku_manual_setting":
+            self.endpoint = config.get("table_name", "incident")
 
     def get_read_schema(self):
         """
