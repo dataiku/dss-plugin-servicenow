@@ -31,13 +31,32 @@ ENDPOINTS_DETAILS = {
         "endpoint": "api/now/table/problem",
         "data_path": ["result"]
     },
+    "caller_id": {
+        "endpoint": "api/now/table/sys_user",
+        "data_path": ["result"]
+    },
+    "sys_db_object": {
+        "endpoint": "api/now/table/sys_db_object",
+        "data_path": ["result"]
+    },
+    "sys_app_category": {
+        "endpoint": "api/now/table/sys_app_category",
+        "data_path": ["result"]
+    },
+    "catalog_category_request": {
+        "endpoint": "api/now/table/catalog_category_request",
+        "data_path": ["result"]
+    },
 }
 DEFAULT_ENDPOINT_DETAILS = ENDPOINTS_DETAILS.get("incident")
 
 
 def get_sn_endpoint_details(endpoint_name):
-    return ENDPOINTS_DETAILS.get(endpoint_name, DEFAULT_ENDPOINT_DETAILS).get("endpoint"), \
-           ENDPOINTS_DETAILS.get(endpoint_name, DEFAULT_ENDPOINT_DETAILS).get("data_path")
+    endpoint_details = ENDPOINTS_DETAILS.get(endpoint_name)
+    if endpoint_details:
+        return endpoint_details.get("endpoint"), endpoint_details.get("data_path")
+    else:
+        return "api/now/table/{}".format(endpoint_name), ["result"]
 
 
 class ServiceNowClient():
