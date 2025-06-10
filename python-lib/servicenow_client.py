@@ -99,6 +99,31 @@ class ServiceNowClient():
         )
         return response
 
+    def lookup_user(self, user_name=None, sys_id=None, name=None, email=None):
+        # user_name: john.doe
+        # name: John Doe
+        users = []
+        if sys_id:
+            param = "sys_id={}".format(sys_id)
+        elif email:
+            param = "email={}".format(email)
+        elif user_name:
+            param = "user_name={}".format(user_name)
+        elif name:
+            param = "name={}".format(name)
+        else:
+            return
+        endpoint, data_path = get_sn_endpoint_details("sys_user")
+        for row in self.client.get_next_row("{}?sysparm_query={}".format(endpoint, param), data_path=["result"]):
+            user = {
+                "email": row.get("email"),
+                "user_name": row.get("user_name"),
+                "sys_id": row.get("sys_id"),
+                "name": row.get("name"),
+            }
+            users.append(user)
+        return users
+
     def attach_document(self, sys_id, file_name, data_to_attach):
         response = self.client.post(
             "api/now/attachment/file",
