@@ -38,6 +38,10 @@ class ServicenowCreateIssueTool(BaseAgentTool):
             "urgency": {
                 "type": "int",
                 "description": "The urgency code. Should be 1, 2 or 3, and is set according to specific rules to follow. Optional."
+            },
+            "caller_id": {
+                "type": "string",
+                "description": "The ID of the caller agent. It might be necessary to lookup first for this ID, based on the agent name, user name or email address. Optional."
             }
         }
         if self.categories:
@@ -74,6 +78,7 @@ class ServicenowCreateIssueTool(BaseAgentTool):
         impact = args.get("impact")
         urgency = args.get("urgency")
         category = args.get("category")
+        caller_id = args.get("caller_id")
 
         try:
             response = self.client.post_incident(
@@ -82,6 +87,7 @@ class ServicenowCreateIssueTool(BaseAgentTool):
                 impact=impact,
                 urgency=urgency,
                 category=category,
+                caller_id=caller_id,
                 can_raise=True
             )
             json_response = response.json()
