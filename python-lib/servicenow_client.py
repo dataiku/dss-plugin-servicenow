@@ -69,9 +69,10 @@ class ServiceNowClient():
             max_number_of_retries=MAX_NUMBER_OR_RETRIES
         )
 
-    def get_next_row(self, endpoint_name):
+    def get_next_row(self, endpoint_name, search_parameters=None):
         endpoint, data_path = get_sn_endpoint_details(endpoint_name)
-        for row in self.client.get_next_row(endpoint, data_path=data_path):
+        params = sys_parm_search_params(search_parameters)
+        for row in self.client.get_next_row(endpoint, data_path=data_path, params=params):
             yield row
 
     def get_next_incident_row(self):
@@ -94,6 +95,22 @@ class ServiceNowClient():
             json["category"] = category
         response = self.client.post(
             "api/now/table/incident",
+            json=json,
+            can_raise=can_raise
+        )
+        return response
+
+    def update_incident(self, issue_id=None, note=None, status=None, can_raise=False):
+        logger.info("update_incident:issue_id={}, note={}, status={}".format(issue_id, note, status))
+        json = {}
+        if status:
+            json["state"] = status
+        if note:
+            response = self.client.get("api/now/table/incident/{}".format(issue_id))
+            work_notes = response.get("work_notes", "")
+            json["work_notes"] = redact_note(work_notes, note)
+        response = self.client.put(
+            "api/now/table/incident/{}".format(issue_id),
             json=json,
             can_raise=can_raise
         )
@@ -149,3 +166,25 @@ class ServiceNowClient():
                 )
             ]
         )
+
+
+def sys_parm_search_params(search_parameters):
+    params = {}
+    if not search_parameters:
+        return params
+    search_items = []
+    for search_parameter in search_parameters:
+        search_items.append("{}={}".format(
+            search_parameter,
+            search_parameters.get(search_parameter)
+        ))
+    params["sysparm_query"] = "^".join(search_items)
+    return params
+
+
+def redact_note(previous_note, new_note):
+    # 2025-06-11 02:59:12 - System Administrator (Work notes)\nsecond note\n\n2025-06-11 02:58:57 - System Administrator (Work notes)\nAdding a note\n\n
+    import datetime
+    now = datetime.datetime.now()
+    date = now.strftime("%Y-%m-%d %H:%M:%S")
+    return "{} - System Administrator (Work notes)\n{}\n\n{}".format(date, new_note, previous_note)

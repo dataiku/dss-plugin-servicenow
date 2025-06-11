@@ -16,13 +16,13 @@ class APIClient():
         self.max_number_of_retries = max_number_of_retries or 1
         self.should_fail_silently = should_fail_silently
 
-    def get(self, endpoint, params=None):
+    def get(self, endpoint, **kwargs):
         full_url = self.get_full_url(endpoint)
         response = None
         while self.should_try_again(response):
             try:
-                logger.info("geting url={}, params={}".format(full_url, params))
-                response = self.session.get(full_url, params=params)
+                logger.info("geting url={}, params={}".format(full_url, kwargs))
+                response = self.session.get(full_url, **kwargs)
             except Exception as error:
                 error_message = "Error on get: {}".format(error)
                 logger.error(error_message)
@@ -44,15 +44,29 @@ class APIClient():
         display_response_error(response, can_raise=can_raise)
         return response
 
+    def put(self, endpoint, params=None, json=None, data=None, headers=None, files=None, can_raise=False):
+        full_url = self.get_full_url(endpoint)
+        response = self.session.put(
+            full_url,
+            headers=headers,
+            params=params,
+            json=json,
+            data=data,
+            files=files
+        )
+        display_response_error(response, can_raise=can_raise)
+        return response
+
     def get_full_url(self, endpoint):
         full_url = "{}/{}".format(self.server_url, endpoint)
         return full_url
 
-    def get_next_row(self, endpoint, data_path=None):
+    def get_next_row(self, endpoint, data_path=None, **kwargs):
         response = None
         items_retrieved = 0
         while self.pagination.has_next_page(response, items_retrieved):
-            response = self.get(endpoint, params=self.pagination.get_paging_parameters())
+            initial_params = kwargs.pop("params", {})
+            response = self.get(endpoint, params=self.pagination.get_paging_parameters(initial_params), **kwargs)
             items_retrieved = 0
             for row in get_next_row_from_response(response, data_path):
                 items_retrieved += 1
@@ -107,18 +121,22 @@ class DefaultPagination():
     def __init__(self):
         # No pagination, just stops after the first page
         logger.info("Single page pagination used")
+        self.is_first_call = True
         pass
 
     def has_next_page(self, response, items_retrieved):
         logger.info("DefaultPagination:has_next_page")
+        self.is_first_call = False
         if response is None:
             logger.info("DefaultPagination:has_next_page initialisation")
             return True
         logger.info("DefaultPagination:has_next_page Stop here")
         return False
 
-    def get_paging_parameters(self):
+    def get_paging_parameters(self, params=None):
         logger.info("DefaultPagination:get_paging_parameters")
+        if self.is_first_call:
+            return params
         return None
 
 
