@@ -1,5 +1,5 @@
 from dataiku.llm.agent_tools import BaseAgentTool
-from servicenow_client import ServiceNowClient, sys_parm_search_params
+from servicenow_client import ServiceNowClient
 from safe_logger import SafeLogger
 
 
