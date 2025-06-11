@@ -1,5 +1,5 @@
 from dataiku.llm.agent_tools import BaseAgentTool
-from servicenow_client import ServiceNowClient
+from servicenow_client import ServiceNowClient, sys_parm_search_params
 from safe_logger import SafeLogger
 
 
@@ -11,15 +11,18 @@ class ServicenowCreateIssueTool(BaseAgentTool):
         self.config = config
         self.client = ServiceNowClient(config)
         self.categories = []
-        for row in self.client.get_next_row("sys_choice"):
-            name = row.get("name")
-            element = row.get("element")
-            if element == "category" and name == "incident":
-                label = row.get("label")
-                value = row.get("value")
-                self.categories.append(
-                    "'{}' (for {} issues)".format(value, label)
+        for row in self.client.get_next_row(
+            "sys_choice",
+            search_parameters={
+                "element": "category",
+                "name": "incident"
+            }
+        ):
+            self.categories.append(
+                "'{}' (for {} issues)".format(
+                    row.get("value"), row.get("label")
                 )
+            )
 
     def get_descriptor(self, tool):
         properties = {
