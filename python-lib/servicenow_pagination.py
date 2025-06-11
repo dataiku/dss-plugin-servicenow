@@ -23,11 +23,13 @@ class ServiceNowPagination():
         logger.info("ServiceNowPaginationhas_next_page:retrieved {} on this run, carrying on".format(items_retrieved))
         return True
 
-    def get_paging_parameters(self):
+    def get_paging_parameters(self, params=None):
         logger.info("ServiceNowPagination:get_paging_parameters")
         headers = {
             "sysparm_limit": self.batch_size,
             "sysparm_offset": self.page_offset,
             "sysparm_query": "ORDERBYDESCsys_created_on"
         }
+        if params:
+            headers.update(params)
         return headers
