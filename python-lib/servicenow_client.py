@@ -141,6 +141,32 @@ class ServiceNowClient():
             users.append(user)
         return users
 
+    def lookup_incident(self, description_contains=None, number=None):
+        issues = []
+        if description_contains:
+            param = "descriptionCONTAINS{}".format(description_contains.replace(" ", "+"))
+        elif number:
+            param = "number={}".format(number)
+        else:
+            return
+        endpoint, data_path = get_sn_endpoint_details("sys_user")
+        for row in self.client.get_next_row("{}?sysparm_query={}".format(endpoint, param), data_path=["result"]):
+            issue = {
+                "number": row.get("number"),
+                "sys_created_on": row.get("sys_created_on"),
+                "state": row.get("state"),
+                "impact": row.get("impact"),
+                "active": row.get("active"),
+                "priority": row.get("priority"),
+                "work_notes": row.get("work_notes"),
+                "description": row.get("description"),
+                "severity": row.get("severity"),
+                "category": row.get("category"),
+                "sys_id": row.get("sys_id")
+            }
+            issues.append(issue)
+        return issues
+
     def attach_document(self, sys_id, file_name, data_to_attach):
         response = self.client.post(
             "api/now/attachment/file",
