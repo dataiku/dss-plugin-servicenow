@@ -144,13 +144,16 @@ class ServiceNowClient():
     def lookup_incident(self, description_contains=None, number=None):
         issues = []
         if description_contains:
-            param = "descriptionCONTAINS{}".format(description_contains.replace(" ", "+"))
+            description_params = []
+            for word in description_contains.split(" "):
+                description_params.append("descriptionCONTAINS{}".format(word))
+            param = "^".join(description_params)
         elif number:
             param = "number={}".format(number)
         else:
             return
-        endpoint, data_path = get_sn_endpoint_details("sys_user")
-        for row in self.client.get_next_row("{}?sysparm_query={}".format(endpoint, param), data_path=["result"]):
+        endpoint, data_path = get_sn_endpoint_details("incident")
+        for row in self.client.get_next_row("{}?sysparm_query={}".format(endpoint, param), data_path=data_path):
             issue = {
                 "number": row.get("number"),
                 "sys_created_on": row.get("sys_created_on"),
