@@ -11,6 +11,7 @@ class ServicenowUpdateStatusTool(BaseAgentTool):
         self.config = config
         self.client = ServiceNowClient(config)
         self.status_labels = []
+        self.close_codes = []
         for row in self.client.get_next_row(
             "sys_choice",
             search_parameters={
@@ -19,16 +20,32 @@ class ServicenowUpdateStatusTool(BaseAgentTool):
             }
         ):
             self.status_labels.append(row.get("label"))
+        for row in self.client.get_next_row(
+            "sys_choice",
+            search_parameters={
+                "element": "close_code",
+                "name": "incident"
+            }
+        ):
+            self.close_codes.append(row.get("label"))
 
     def get_descriptor(self, tool):
         properties = {
-            "issue_id": {
+            "sys_id": {
                 "type": "string",
-                "description": "ID of the issue to update"
+                "description": "The sys_id of the issue to update. sys_id are 32 hexadecimal strings. Other ID types will first require to use the incident lookup tool to find the corresponding sys_id."
             },
             "note": {
                 "type": "string",
                 "description": "The note to add to the issue. Optional"
+            },
+            "close_notes": {
+                "type": "string",
+                "description": "The closing comment explaining how the incident was solved."
+            },
+            "comments": {
+                "type": "string",
+                "description": ""
             }
         }
         if self.status_labels:
@@ -36,6 +53,13 @@ class ServicenowUpdateStatusTool(BaseAgentTool):
                 "type": "string",
                 "description": "The status of the issue. It can be one of the following: {}. Optional.".format(
                     ", ".join(self.status_labels)
+                )
+            }
+        if self.close_codes:
+            properties["close_code"] = {
+                "type": "string",
+                "description": "The closing code of the issue. It can be one of the following: {}.".format(
+                    ", ".join(self.close_codes)
                 )
             }
         descriptor = {
@@ -60,13 +84,13 @@ class ServicenowUpdateStatusTool(BaseAgentTool):
             trace.inputs[key] = value
         trace.attributes["config"] = {"servicenow_server_url": self.client.server_url}
 
-        issue_id = args.get("issue_id")
+        sys_id = args.get("sys_id")
         note = args.get("note")
         status = args.get("status")
 
         try:
             response = self.client.update_incident(
-                issue_id=issue_id,
+                issue_id=sys_id,
                 note=note,
                 status=status,
                 can_raise=True
