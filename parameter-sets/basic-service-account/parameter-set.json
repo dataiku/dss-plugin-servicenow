@@ -2,7 +2,7 @@
     "meta" : {
         "label": "Service accounts",
         "description": "",
-        "icon": "fas fa-puzzle-piece"
+        "icon": "icon-ticket"
     },
     "defaultDefinableInline": true,
     "defaultDefinableAtProjectLevel": true,
