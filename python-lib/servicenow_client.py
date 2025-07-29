@@ -101,8 +101,6 @@ class ServiceNowClient():
         return response
 
     def update_incident(self, issue_id=None, note=None, close_notes=None, comments=None, status=None, close_code=None, can_raise=False):
-        # close_notes = args.get("close_notes")
-        # comments = args.get("comments")
         logger.info("update_incident:issue_id={}, note={}, status={}".format(issue_id, note, status))
         json = {}
         if status:
