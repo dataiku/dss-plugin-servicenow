@@ -25,7 +25,7 @@ class ServicenowLookupIncidentIDTool(BaseAgentTool):
                     },
                     "number": {
                         "type": "string",
-                        "decription": "Contains the effective number of the incident to look up. It should start with INC folowed by sevent digits, for instance 'INC0010022'"
+                        "decription": "Contains the exact effective number of the incident to look up. It should start with INC folowed by sevent digits, for instance 'INC0010022'"
                     }
                 }
             }
@@ -44,10 +44,6 @@ class ServicenowLookupIncidentIDTool(BaseAgentTool):
 
         description_contains = args.get("description_contains")
         number = args.get("number")
-
-        # https://www.servicenow.com/community/developer-forum/get-the-user-sys-id-by-usrname-in-rest-api/m-p/1448992
-        # https://<INSTNACE>.service-now.com/api/now/table/sys_user?sysparm_query%3Duser_name=<USERNAME>&sysparm_fields=sys_id&sysparm_limit=1
-        # sysparm_query=descriptionCONTAINSunable+to+connect
 
         try:
             incidents = self.client.lookup_incident(
