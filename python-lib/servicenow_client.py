@@ -1,3 +1,4 @@
+import datetime
 from servicenow_commons import get_user_password_server_from_config, is_valid_level
 from servicenow_pagination import ServiceNowPagination
 from safe_logger import SafeLogger
@@ -184,7 +185,6 @@ def sys_parm_search_params(search_parameters):
 
 def redact_note(previous_note, new_note):
     # 2025-06-11 02:59:12 - System Administrator (Work notes)\nsecond note\n\n2025-06-11 02:58:57 - System Administrator (Work notes)\nAdding a note\n\n
-    import datetime
     now = datetime.datetime.now()
     date = now.strftime("%Y-%m-%d %H:%M:%S")
     return "{} - System Administrator (Work notes)\n{}\n\n{}".format(date, new_note, previous_note)
