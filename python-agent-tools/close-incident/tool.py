@@ -103,7 +103,7 @@ class ServicenowCloseIncidentTool(BaseAgentTool):
                 "output": "There was a problem while closing the issue ticket: {}".format(error)
             }
         created_issue = json_response.get("result", {})
-        output = 'Issue created: {} available at {}'.format(
+        output = 'Issue {} has been closed. It is available at {}'.format(
             created_issue.get("number"),
             self.client.get_issue_url(json_response)
         )
