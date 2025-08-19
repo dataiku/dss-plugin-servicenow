@@ -73,9 +73,9 @@ class ServicenowUpdateStatusTool(BaseAgentTool):
             )
             json_response = response.json()
         except Exception as error:
-            logger.error("There was an error '{}' while creating the issue".format(error))
+            logger.error("There was an error '{}' while updating the issue".format(error))
             return {
-                "output": "There was a problem while creating the issue ticket: {}".format(error)
+                "output": "There was a problem while updating the issue ticket: {}".format(error)
             }
         created_issue = json_response.get("result", {})
         output = 'Issue created: {} available at {}'.format(
