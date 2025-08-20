@@ -1,7 +1,7 @@
 {
     "id": "lookup-servicenow-caller-id",
     "meta": {
-        "icon": "icon-ticket",
+        "icon": "icon-ticket dku-icon-servicenow",
         "label": "Lookup caller ID",
         "description": "Find the ID of a ServiceNow user"
     },

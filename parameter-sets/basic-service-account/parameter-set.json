@@ -2,7 +2,7 @@
     "meta" : {
         "label": "Service accounts",
         "description": "",
-        "icon": "icon-ticket"
+        "icon": "icon-ticket dku-icon-servicenow"
     },
     "defaultDefinableInline": true,
     "defaultDefinableAtProjectLevel": true,

@@ -1,7 +1,7 @@
 {
     "id": "create-servicenow-issue",
     "meta": {
-        "icon": "icon-ticket",
+        "icon": "icon-ticket dku-icon-servicenow",
         "label": "Create Servicenow Issue",
         "description": "Create a ServiceNow issue based on user input"
     },

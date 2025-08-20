@@ -1,7 +1,7 @@
 {
     "id": "lookup-servicenow-incident",
     "meta": {
-        "icon": "icon-ticket",
+        "icon": "icon-ticket dku-icon-servicenow",
         "label": "Lookup incident",
         "description": "Find the ID of a ServiceNow incident"
     },

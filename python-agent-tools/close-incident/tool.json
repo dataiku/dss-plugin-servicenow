@@ -1,7 +1,7 @@
 {
     "id": "close-servicenow-incident",
     "meta": {
-        "icon": "icon-ticket",
+        "icon": "icon-ticket dku-icon-servicenow",
         "label": "Close an incident",
         "description": "Close a Servicenow incident"
     },

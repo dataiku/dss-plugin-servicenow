@@ -1,7 +1,7 @@
 {
     "id": "update-servicenow-status",
     "meta": {
-        "icon": "icon-ticket",
+        "icon": "icon-ticket dku-icon-servicenow",
         "label": "Update status",
         "description": "Update the status of an incident"
     },
