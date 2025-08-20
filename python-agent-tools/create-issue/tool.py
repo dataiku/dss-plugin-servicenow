@@ -10,35 +10,61 @@ class ServicenowCreateIssueTool(BaseAgentTool):
     def set_config(self, config, plugin_config):
         self.config = config
         self.client = ServiceNowClient(config)
+        self.categories = []
+        for row in self.client.get_next_row(
+            "sys_choice",
+            search_parameters={
+                "element": "category",
+                "name": "incident"
+            }
+        ):
+            self.categories.append(
+                "'{}' (for {} issues)".format(
+                    row.get("value"), row.get("label")
+                )
+            )
 
     def get_descriptor(self, tool):
-        return {
+        properties = {
+            "summary": {
+                "type": "string",
+                "description": "The issue summary"
+            },
+            "description": {
+                "type": "string",
+                "description": "The issue description"
+            },
+            "impact": {
+                "type": "int",
+                "description": "The impact code. Should be 1, 2 or 3, and is set according to specific rules to follow. Optional."
+            },
+            "urgency": {
+                "type": "int",
+                "description": "The urgency code. Should be 1, 2 or 3, and is set according to specific rules to follow. Optional."
+            },
+            "caller_id": {
+                "type": "string",
+                "description": "The ID of the caller agent. It might be necessary to lookup first for this ID, based on the agent name, user name or email address. Optional."
+            }
+        }
+        if self.categories:
+            properties["category"] = {
+                "type": "string",
+                "description": "The category of the issue. It can be one of the following: {}.".format(
+                    ", ".join(self.categories)
+                )
+            }
+        descriptor = {
             "description": "This tool is a wrapper around Servicenow issue_create API, useful when you need to create a Servicenow issue. The input to this tool is a dictionary containing the new issue summary and description, e.g. '{'summary':'new issue summary', 'description':'new issue description'}'",
             "inputSchema": {
                 "$id": "https://dataiku.com/agents/tools/search/input",
                 "title": "Create Servicenow issue tool",
                 "type": "object",
-                "properties": {
-                    "summary": {
-                        "type": "string",
-                        "description": "The issue summary"
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "The issue description"
-                    },
-                    "impact": {
-                        "type": "int",
-                        "description": "The impact code. Should be 1, 2 or 3, and is set according to specific rules to follow. Optional."
-                    },
-                    "urgency": {
-                        "type": "int",
-                        "description": "The urgency code. Should be 1, 2 or 3, and is set according to specific rules to follow. Optional."
-                    }
-                },
+                "properties": properties,
                 "required": ["summary", "description"]
             }
         }
+        return descriptor
 
     def invoke(self, input, trace):
         logger.info("servicenow tool invoked with {}".format(input))
@@ -54,6 +80,8 @@ class ServicenowCreateIssueTool(BaseAgentTool):
         description = args.get("description")
         impact = args.get("impact")
         urgency = args.get("urgency")
+        category = args.get("category")
+        caller_id = args.get("caller_id")
 
         try:
             response = self.client.post_incident(
@@ -61,6 +89,8 @@ class ServicenowCreateIssueTool(BaseAgentTool):
                 description=description,
                 impact=impact,
                 urgency=urgency,
+                category=category,
+                caller_id=caller_id,
                 can_raise=True
             )
             json_response = response.json()

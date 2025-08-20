@@ -60,8 +60,34 @@
                 {
                     "value": "problem",
                     "label": "Problems"
+                },
+                {
+                    "value": "caller_id",
+                    "label": "Caller ID"
+                },
+                {
+                    "value": "sys_db_object",
+                    "label": "List all tables"
+                },
+                {
+                    "value": "sys_app_category",
+                    "label": "Categories"
+                },
+                {
+                    "value": "catalog_category_request",
+                    "label": "Catalog category"
+                },
+                {
+                    "value": "_dku_manual_setting",
+                    "label": "✍️ Enter manually"
                 }
             ]
+        },
+        {
+            "name": "table_name",
+            "label": "Tabel name",
+            "type": "STRING",
+            "visibilityCondition": "model.endpoint=='_dku_manual_setting'"
         }
     ]
 }
