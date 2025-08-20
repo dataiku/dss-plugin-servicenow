@@ -1,3 +1,4 @@
+import datetime
 from servicenow_commons import get_user_password_server_from_config, is_valid_level
 from servicenow_pagination import ServiceNowPagination
 from safe_logger import SafeLogger
@@ -69,9 +70,10 @@ class ServiceNowClient():
             max_number_of_retries=MAX_NUMBER_OR_RETRIES
         )
 
-    def get_next_row(self, endpoint_name):
+    def get_next_row(self, endpoint_name, search_parameters=None):
         endpoint, data_path = get_sn_endpoint_details(endpoint_name)
-        for row in self.client.get_next_row(endpoint, data_path=data_path):
+        params = sys_parm_search_params(search_parameters)
+        for row in self.client.get_next_row(endpoint, data_path=data_path, params=params):
             yield row
 
     def get_next_incident_row(self):
@@ -99,6 +101,82 @@ class ServiceNowClient():
         )
         return response
 
+    def update_incident(self, issue_id=None, note=None, close_notes=None, comments=None, status=None, close_code=None, can_raise=False):
+        logger.info("update_incident:issue_id={}, note={}, status={}".format(issue_id, note, status))
+        json = {}
+        if status:
+            json["state"] = status
+        if note:
+            response = self.client.get("api/now/table/incident/{}".format(issue_id))
+            work_notes = response.get("work_notes", "")
+            json["work_notes"] = redact_note(work_notes, note)
+        if close_notes:
+            json["close_notes"] = close_notes
+        if comments:
+            json["comments"] = comments
+        if close_code:
+            json["close_code"] = close_code
+        response = self.client.put(
+            "api/now/table/incident/{}".format(issue_id),
+            json=json,
+            can_raise=can_raise
+        )
+        return response
+
+    def lookup_user(self, user_name=None, sys_id=None, name=None, email=None):
+        # user_name: john.doe
+        # name: John Doe
+        users = []
+        if sys_id:
+            param = "sys_id={}".format(sys_id)
+        elif email:
+            param = "email={}".format(email)
+        elif user_name:
+            param = "user_name={}".format(user_name)
+        elif name:
+            param = "name={}".format(name)
+        else:
+            return
+        endpoint, data_path = get_sn_endpoint_details("sys_user")
+        for row in self.client.get_next_row("{}?sysparm_query={}".format(endpoint, param), data_path=["result"]):
+            user = {
+                "email": row.get("email"),
+                "user_name": row.get("user_name"),
+                "sys_id": row.get("sys_id"),
+                "name": row.get("name"),
+            }
+            users.append(user)
+        return users
+
+    def lookup_incident(self, description_contains=None, number=None):
+        issues = []
+        if description_contains:
+            description_params = []
+            for word in description_contains.split(" "):
+                description_params.append("descriptionCONTAINS{}".format(word))
+            param = "^".join(description_params)
+        elif number:
+            param = "number={}".format(number)
+        else:
+            return
+        endpoint, data_path = get_sn_endpoint_details("incident")
+        for row in self.client.get_next_row("{}?sysparm_query={}".format(endpoint, param), data_path=data_path):
+            issue = {
+                "number": row.get("number"),
+                "sys_created_on": row.get("sys_created_on"),
+                "state": row.get("state"),
+                "impact": row.get("impact"),
+                "active": row.get("active"),
+                "priority": row.get("priority"),
+                "work_notes": row.get("work_notes"),
+                "description": row.get("description"),
+                "severity": row.get("severity"),
+                "category": row.get("category"),
+                "sys_id": row.get("sys_id")
+            }
+            issues.append(issue)
+        return issues
+
     def attach_document(self, sys_id, file_name, data_to_attach):
         response = self.client.post(
             "api/now/attachment/file",
@@ -124,3 +202,37 @@ class ServiceNowClient():
                 )
             ]
         )
+
+
+def sys_parm_search_params(search_parameters):
+    params = {}
+    if not search_parameters:
+        return params
+    search_items = []
+    for search_parameter in search_parameters:
+        search_items.append("{}={}".format(
+            search_parameter,
+            search_parameters.get(search_parameter)
+        ))
+    params["sysparm_query"] = "^".join(search_items)
+    return params
+
+
+def redact_note(previous_note, new_note):
+    # 2025-06-11 02:59:12 - System Administrator (Work notes)\nsecond note\n\n2025-06-11 02:58:57 - System Administrator (Work notes)\nAdding a note\n\n
+    now = datetime.datetime.now()
+    date = now.strftime("%Y-%m-%d %H:%M:%S")
+    return "{} - System Administrator (Work notes)\n{}\n\n{}".format(date, new_note, previous_note)
+
+
+def is_sys_id(sys_id):
+    # Check that the sys_id is a 32b long hexa string
+    if not isinstance(sys_id, str):
+        return False
+    if len(sys_id) != 32:
+        return False
+    try:
+        _ = int(sys_id, 16)
+    except Exception:
+        return False
+    return True

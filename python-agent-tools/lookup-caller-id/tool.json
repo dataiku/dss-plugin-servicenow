@@ -1,0 +1,40 @@
+{
+    "id": "lookup-servicenow-caller-id",
+    "meta": {
+        "icon": "icon-ticket",
+        "label": "Lookup caller ID",
+        "description": "Find the ID of a ServiceNow user"
+    },
+    
+    "params" : [
+        {
+            "name": "auth_type",
+            "label": "Authentication type",
+            "type": "SELECT",
+            "selectChoices": [
+                {
+                    "value": "basic_per_user",
+                    "label": "User account"
+                },
+                {
+                    "value": "basic_service_account",
+                    "label": "Service account"
+                }
+            ]
+        },
+        {
+            "name": "basic_per_user",
+            "label": "Per user",
+            "type": "PRESET",
+            "parameterSetId": "basic-per-user",
+            "visibilityCondition": "model.auth_type=='basic_per_user'"
+        },
+        {
+            "name": "basic_service_account",
+            "label": "Service account",
+            "type": "PRESET",
+            "parameterSetId": "basic-service-account",
+            "visibilityCondition": "model.auth_type=='basic_service_account'"
+        }
+    ]
+}

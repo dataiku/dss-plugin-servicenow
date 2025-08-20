@@ -11,15 +11,18 @@ class ServicenowCreateIssueTool(BaseAgentTool):
         self.config = config
         self.client = ServiceNowClient(config)
         self.categories = []
-        for row in self.client.get_next_row("sys_choice"):
-            name = row.get("name")
-            element = row.get("element")
-            if element == "category" and name == "incident":
-                label = row.get("label")
-                value = row.get("value")
-                self.categories.append(
-                    "'{}' (for {} issues)".format(value, label)
+        for row in self.client.get_next_row(
+            "sys_choice",
+            search_parameters={
+                "element": "category",
+                "name": "incident"
+            }
+        ):
+            self.categories.append(
+                "'{}' (for {} issues)".format(
+                    row.get("value"), row.get("label")
                 )
+            )
 
     def get_descriptor(self, tool):
         properties = {
@@ -38,6 +41,10 @@ class ServicenowCreateIssueTool(BaseAgentTool):
             "urgency": {
                 "type": "int",
                 "description": "The urgency code. Should be 1, 2 or 3, and is set according to specific rules to follow. Optional."
+            },
+            "caller_id": {
+                "type": "string",
+                "description": "The ID of the caller agent. It might be necessary to lookup first for this ID, based on the agent name, user name or email address. Optional."
             }
         }
         if self.categories:
@@ -74,6 +81,7 @@ class ServicenowCreateIssueTool(BaseAgentTool):
         impact = args.get("impact")
         urgency = args.get("urgency")
         category = args.get("category")
+        caller_id = args.get("caller_id")
 
         try:
             response = self.client.post_incident(
@@ -82,6 +90,7 @@ class ServicenowCreateIssueTool(BaseAgentTool):
                 impact=impact,
                 urgency=urgency,
                 category=category,
+                caller_id=caller_id,
                 can_raise=True
             )
             json_response = response.json()
