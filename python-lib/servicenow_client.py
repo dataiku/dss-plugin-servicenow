@@ -100,7 +100,7 @@ class ServiceNowClient():
         )
         return response
 
-    def update_incident(self, issue_id=None, note=None, status=None, can_raise=False):
+    def update_incident(self, issue_id=None, note=None, close_notes=None, comments=None, status=None, close_code=None, can_raise=False):
         logger.info("update_incident:issue_id={}, note={}, status={}".format(issue_id, note, status))
         json = {}
         if status:
@@ -109,6 +109,12 @@ class ServiceNowClient():
             response = self.client.get("api/now/table/incident/{}".format(issue_id))
             work_notes = response.get("work_notes", "")
             json["work_notes"] = redact_note(work_notes, note)
+        if close_notes:
+            json["close_notes"] = close_notes
+        if comments:
+            json["comments"] = comments
+        if close_code:
+            json["close_code"] = close_code
         response = self.client.put(
             "api/now/table/incident/{}".format(issue_id),
             json=json,
@@ -217,3 +223,16 @@ def redact_note(previous_note, new_note):
     now = datetime.datetime.now()
     date = now.strftime("%Y-%m-%d %H:%M:%S")
     return "{} - System Administrator (Work notes)\n{}\n\n{}".format(date, new_note, previous_note)
+
+
+def is_sys_id(sys_id):
+    # Check that the sys_id is a 32b long hexa string
+    if not isinstance(sys_id, str):
+        return False
+    if len(sys_id) != 32:
+        return False
+    try:
+        _ = int(sys_id, 16)
+    except Exception:
+        return False
+    return True

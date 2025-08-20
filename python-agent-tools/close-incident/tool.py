@@ -1,12 +1,12 @@
 from dataiku.llm.agent_tools import BaseAgentTool
-from servicenow_client import ServiceNowClient
+from servicenow_client import ServiceNowClient, is_sys_id
 from safe_logger import SafeLogger
 
 
 logger = SafeLogger("servicenow plugin", ["password"])
 
 
-class ServicenowUpdateStatusTool(BaseAgentTool):
+class ServicenowCloseIncidentTool(BaseAgentTool):
     def set_config(self, config, plugin_config):
         self.config = config
         self.client = ServiceNowClient(config)
@@ -34,10 +34,6 @@ class ServicenowUpdateStatusTool(BaseAgentTool):
             "sys_id": {
                 "type": "string",
                 "description": "The sys_id of the issue to update. sys_id are 32 hexadecimal strings. Other ID types will first require to use the incident lookup tool to find the corresponding sys_id."
-            },
-            "note": {
-                "type": "string",
-                "description": "The note to add to the issue. Optional"
             },
             "close_notes": {
                 "type": "string",
@@ -75,34 +71,39 @@ class ServicenowUpdateStatusTool(BaseAgentTool):
         return descriptor
 
     def invoke(self, input, trace):
-        logger.info("servicenow update status tool invoked with {}".format(input))
+        logger.info("servicenow close incident tool invoked with {}".format(input))
         args = input.get("input", {})
 
         # Log inputs and config to trace
-        trace.span["name"] = "SERVICENOW_UPDATE_ISSUE_TOOL_CALL"
+        trace.span["name"] = "SERVICENOW_CLOSE_ISSUE_TOOL_CALL"
         for key, value in args.items():
             trace.inputs[key] = value
         trace.attributes["config"] = {"servicenow_server_url": self.client.server_url}
 
         sys_id = args.get("sys_id")
-        note = args.get("note")
-        status = args.get("status")
+        if not is_sys_id(sys_id):
+            return {"error": "{} is not a sys_id. Use the incident lookup tool first to find the incident sys-id.".format(sys_id)}
+        close_notes = args.get("close_notes")
+        close_code = args.get("close_code")
+        comments = args.get("comments")
 
         try:
             response = self.client.update_incident(
                 issue_id=sys_id,
-                note=note,
-                status=status,
+                status="Resolved",  # <- there is also Closed, Canceled
+                close_code=close_code,
+                close_notes=close_notes,
+                comments=comments,
                 can_raise=True
             )
             json_response = response.json()
         except Exception as error:
-            logger.error("There was an error '{}' while creating the issue".format(error))
+            logger.error("There was an error '{}' while closing the issue".format(error))
             return {
-                "output": "There was a problem while creating the issue ticket: {}".format(error)
+                "output": "There was a problem while closing the issue ticket: {}".format(error)
             }
         created_issue = json_response.get("result", {})
-        output = 'Issue created: {} available at {}'.format(
+        output = 'Issue {} has been closed. It is available at {}'.format(
             created_issue.get("number"),
             self.client.get_issue_url(json_response)
         )
