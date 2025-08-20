@@ -148,7 +148,27 @@ def display_response_error(response, can_raise=False):
         logger.info("status_code={}".format(status_code))
         if status_code >= 400:
             logger.error("Error {}. Dumping response:{}".format(status_code, response.content))
+            error_message = extract_error_message(response)
+            if not error_message:
+                error_message = response.status_code
             if can_raise:
-                raise Exception("Error {}".format(response.status_code))
+                raise Exception("Error {}".format(error_message))
     else:
         logger.error("Not a requests.Response object")
+
+
+def extract_error_message(response):
+    try:
+        json_response = response.json()
+        error = json_response.get("error", {})
+        message = error.get("message")
+        detail = error.get("detail")
+        if detail:
+            return detail
+        elif message:
+            return message
+        elif error:
+            return error
+        return
+    except Exception:
+        return
