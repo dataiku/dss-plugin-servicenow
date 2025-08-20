@@ -1,5 +1,14 @@
 # Changelog
 
+## [Version 0.0.10](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.10) - Bug fix and feature release - 2025-08-20
+
+- Add tools to:
+    - lookup a user
+    - lookup an incident
+    - update an incident status
+    - close an incident
+- Add manual table selector
+
 ## [Version 0.0.9](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.9) - Bug fix release - 2025-05-12
 
 - Fixing trace logging
