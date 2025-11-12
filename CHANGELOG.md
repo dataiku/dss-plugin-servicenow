@@ -1,5 +1,10 @@
 # Changelog
 
+## [Version 0.0.11](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.11) - Bug fix and feature release - 2025-11-13
+
+- Updated agent tools to load sample queries:
+- Added "assigned_to" field for create issue tool
+
 ## [Version 0.0.10](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.10) - Bug fix and feature release - 2025-08-20
 
 - Add tools to:

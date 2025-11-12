@@ -65,11 +65,16 @@ class ServicenowCloseIncidentTool(BaseAgentTool):
                 "title": "Update Servicenow issue tool",
                 "type": "object",
                 "properties": properties,
-                "required": ["issue_id"]
+                "required": ["sys_id"]
             }
         }
         return descriptor
 
+    def load_sample_query(self, tool):
+        return {
+            "sys_id": "The sys_id of the issue to update. sys_id are 32 hexadecimal strings. Other ID types will first require to use the incident lookup tool to find the corresponding sys_id."
+        }
+    
     def invoke(self, input, trace):
         logger.info("servicenow close incident tool invoked with {}".format(input))
         args = input.get("input", {})

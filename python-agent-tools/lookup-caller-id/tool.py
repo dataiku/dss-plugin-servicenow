@@ -40,6 +40,11 @@ class ServicenowLookupCallerIDTool(BaseAgentTool):
         }
         return descriptor
 
+    def load_sample_query(self, tool):
+        return {
+            "name": "The full name of the user to search, for instance 'John Doe'"
+        }
+
     def invoke(self, input, trace):
         logger.info("servicenow tool invoked with {}".format(input))
         args = input.get("input", {})

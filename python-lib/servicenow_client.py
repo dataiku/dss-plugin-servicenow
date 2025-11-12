@@ -80,8 +80,8 @@ class ServiceNowClient():
         for row in self.get_next_row("incident"):
             yield row
 
-    def post_incident(self, short_description=None, description=None,
-                      caller_id=None, impact=None, urgency=None, category=None, can_raise=False):
+    def post_incident(self, short_description=None, description=None, impact=None, 
+                      urgency=None, category=None, caller_id=None, assigned_to=None, can_raise=False):
         logger.info("post_incident:short_description={}, caller_id={}".format(short_description, caller_id))
         json = {
             "short_description": short_description,
@@ -94,6 +94,8 @@ class ServiceNowClient():
             json["urgency"] = urgency
         if category:
             json["category"] = category
+        if assigned_to:
+            json["assigned_to"] = assigned_to
         response = self.client.post(
             "api/now/table/incident",
             json=json,
@@ -172,7 +174,10 @@ class ServiceNowClient():
                 "description": row.get("description"),
                 "severity": row.get("severity"),
                 "category": row.get("category"),
-                "sys_id": row.get("sys_id")
+                "sys_id": row.get("sys_id"),
+                "caller_id": row.get("caller_id"),
+                "assigned_to": row.get("caller_id")
+
             }
             issues.append(issue)
         return issues
