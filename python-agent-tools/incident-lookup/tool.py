@@ -32,6 +32,12 @@ class ServicenowLookupIncidentIDTool(BaseAgentTool):
         }
         return descriptor
 
+    def load_sample_query(self, tool):
+        return {
+            "description_contains": "Search terms for the incident, for instance 'cannot login' ",
+            "number": "The exact effective number of the incident to look up. It should start with INC folowed by sevent digits, for instance 'INC0010022'"
+        }
+
     def invoke(self, input, trace):
         logger.info("servicenow tool invoked with {}".format(input))
         args = input.get("input", {})

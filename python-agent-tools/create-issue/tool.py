@@ -44,7 +44,11 @@ class ServicenowCreateIssueTool(BaseAgentTool):
             },
             "caller_id": {
                 "type": "string",
-                "description": "The ID of the caller agent. It might be necessary to lookup first for this ID, based on the agent name, user name or email address. Optional."
+                "description": "The ID of the caller agent. Use the Lookup caller ID tool first to get the caller ID based on the agent name, user name or email address. Optional."
+            },
+            "assigned_to": {
+                "type": "string",
+                "description": "The ID of the assigned agent. Use the Lookup caller ID tool first to get the caller ID based on the agent name, user name or email address. Optional."
             }
         }
         if self.categories:
@@ -66,6 +70,12 @@ class ServicenowCreateIssueTool(BaseAgentTool):
         }
         return descriptor
 
+    def load_sample_query(self, tool):
+        return {
+            "summary": "The issue summary",
+            "description": "The issue description"
+        }
+
     def invoke(self, input, trace):
         logger.info("servicenow tool invoked with {}".format(input))
         args = input.get("input", {})
@@ -82,6 +92,7 @@ class ServicenowCreateIssueTool(BaseAgentTool):
         urgency = args.get("urgency")
         category = args.get("category")
         caller_id = args.get("caller_id")
+        assigned_to = args.get("assigned_to")
 
         try:
             response = self.client.post_incident(
@@ -91,6 +102,7 @@ class ServicenowCreateIssueTool(BaseAgentTool):
                 urgency=urgency,
                 category=category,
                 caller_id=caller_id,
+                assigned_to=assigned_to,
                 can_raise=True
             )
             json_response = response.json()
