@@ -66,7 +66,8 @@ class APIClient():
         items_retrieved = 0
         while self.pagination.has_next_page(response, items_retrieved):
             initial_params = kwargs.pop("params", {})
-            response = self.get(endpoint, params=self.pagination.get_paging_parameters(initial_params), **kwargs)
+            params = self.pagination.get_paging_parameters(initial_params)
+            response = self.get(endpoint, params=params, **kwargs)
             items_retrieved = 0
             for row in get_next_row_from_response(response, data_path):
                 items_retrieved += 1

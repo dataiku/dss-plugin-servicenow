@@ -70,9 +70,10 @@ class ServiceNowClient():
             max_number_of_retries=MAX_NUMBER_OR_RETRIES
         )
 
-    def get_next_row(self, endpoint_name, search_parameters=None):
+    def get_next_row(self, endpoint_name, search_parameters=None, params=None):
         endpoint, data_path = get_sn_endpoint_details(endpoint_name)
-        params = sys_parm_search_params(search_parameters)
+        params = params or {}
+        params.update(sys_parm_search_params(search_parameters))
         for row in self.client.get_next_row(endpoint, data_path=data_path, params=params):
             yield row
 
