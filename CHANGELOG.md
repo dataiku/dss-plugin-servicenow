@@ -1,5 +1,9 @@
 # Changelog
 
+## [Version 0.0.12](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.12) - Bug fix and feature release - 2026-03-16
+
+- Display values instead of lookup IDs
+
 ## [Version 0.0.11](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.11) - Bug fix and feature release - 2025-11-13
 
 - Updated agent tools to load sample queries
