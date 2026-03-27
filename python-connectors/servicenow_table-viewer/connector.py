@@ -11,11 +11,12 @@ class ServiceNowConnector(Connector):
 
     def __init__(self, config, plugin_config):
         Connector.__init__(self, config, plugin_config)
-        logger.info("Starting ServiceNow plugin v0.0.6 with config:{}".format(logger.filter_secrets(config)))
+        logger.info("Starting ServiceNow plugin v0.0.12 with config:{}".format(logger.filter_secrets(config)))
         self.client = ServiceNowClient(config)
         self.endpoint = config.get("endpoint", "incident")
         if self.endpoint == "_dku_manual_setting":
             self.endpoint = config.get("table_name", "incident")
+        self.display_values = config.get("display_values", False)  # True for new dataset, false for existing ones
 
     def get_read_schema(self):
         """
@@ -44,7 +45,12 @@ class ServiceNowConnector(Connector):
     def generate_rows(self, dataset_schema=None, dataset_partitioning=None,
                       partition_id=None, records_limit=-1):
         limit = RecordsLimit(records_limit)
-        for row in self.client.get_next_row(self.endpoint):
+        params = None
+        if self.display_values:
+            params = {
+                "sysparm_display_value": True
+            }
+        for row in self.client.get_next_row(self.endpoint, params=params):
             yield only_display_value(row)
             if limit.is_reached():
                 break

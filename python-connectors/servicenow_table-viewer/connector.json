@@ -88,6 +88,13 @@
             "label": "Tabel name",
             "type": "STRING",
             "visibilityCondition": "model.endpoint=='_dku_manual_setting'"
+        },
+        {
+            "name": "display_values",
+            "label": " ",
+            "description": "Display values",
+            "type": "BOOLEAN",
+            "defaultValue": true
         }
     ]
 }

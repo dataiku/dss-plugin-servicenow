@@ -1,4 +1,5 @@
 from safe_logger import SafeLogger
+from urllib.parse import urlparse
 
 logger = SafeLogger("servicenow plugin", ["password"])
 
@@ -6,11 +7,23 @@ logger = SafeLogger("servicenow plugin", ["password"])
 def get_user_password_server_from_config(config):
     auth_type = config.get("auth_type", "basic_per_user")
     credentials = config.get(auth_type, {})
+    server_url = server_url_normalization(credentials.get("server_url", ""))
     if auth_type == "basic_per_user":
         basic_per_user = credentials.get("basic_per_user")
-        return basic_per_user.get("user", ""), basic_per_user.get("password", ""), credentials.get("server_url", "")
+        return basic_per_user.get("user", ""), basic_per_user.get("password", ""), server_url
     else:
-        return credentials.get("user", ""), credentials.get("password", ""), credentials.get("server_url", "")
+        return credentials.get("user", ""), credentials.get("password", ""), server_url
+
+
+def server_url_normalization(raw_server_url):
+    if not raw_server_url:
+        raise Exception("The server URL is empty")
+    server_url = raw_server_url
+    if not server_url.startswith("http"):
+        server_url = "https://{}".format(server_url)
+    parsed_url = urlparse(server_url)
+    server_url = parsed_url.scheme + "://" + parsed_url.netloc
+    return server_url
 
 
 def get_failed_steps(scenario_variables):
