@@ -85,7 +85,7 @@
         },
         {
             "name": "table_name",
-            "label": "Tabel name",
+            "label": "Table name",
             "type": "STRING",
             "visibilityCondition": "model.endpoint=='_dku_manual_setting'"
         },
