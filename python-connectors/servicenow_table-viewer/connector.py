@@ -1,6 +1,6 @@
 from dataiku.connector import Connector
 from servicenow_client import ServiceNowClient
-from servicenow_commons import RecordsLimit
+from servicenow_commons import RecordsLimit, get_parameters_from_config
 from safe_logger import SafeLogger
 
 
@@ -13,10 +13,7 @@ class ServiceNowConnector(Connector):
         Connector.__init__(self, config, plugin_config)
         logger.info("Starting ServiceNow plugin v0.0.12 with config:{}".format(logger.filter_secrets(config)))
         self.client = ServiceNowClient(config)
-        self.endpoint = config.get("endpoint", "incident")
-        if self.endpoint == "_dku_manual_setting":
-            self.endpoint = config.get("table_name", "incident")
-        self.display_values = config.get("display_values", False)  # True for new dataset, false for existing ones
+        self.endpoint, self.display_values, self.sysparm_query, self.sysparm_fields = get_parameters_from_config(config)
 
     def get_read_schema(self):
         """
@@ -45,11 +42,13 @@ class ServiceNowConnector(Connector):
     def generate_rows(self, dataset_schema=None, dataset_partitioning=None,
                       partition_id=None, records_limit=-1):
         limit = RecordsLimit(records_limit)
-        params = None
+        params = {}
         if self.display_values:
-            params = {
-                "sysparm_display_value": True
-            }
+            params["sysparm_display_value"] = True
+        if self.sysparm_query:
+            params["sysparm_query"] = self.sysparm_query
+        if self.sysparm_fields:
+            params["sysparm_fields"] = self.sysparm_fields
         for row in self.client.get_next_row(self.endpoint, params=params):
             yield only_display_value(row)
             if limit.is_reached():
