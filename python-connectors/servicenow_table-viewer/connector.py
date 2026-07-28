@@ -11,7 +11,7 @@ class ServiceNowConnector(Connector):
 
     def __init__(self, config, plugin_config):
         Connector.__init__(self, config, plugin_config)
-        logger.info("Starting ServiceNow plugin v0.0.13-beta.1 with config:{}".format(logger.filter_secrets(config)))
+        logger.info("Starting ServiceNow plugin v0.0.13-beta.2 with config:{}".format(logger.filter_secrets(config)))
         self.client = ServiceNowClient(config)
         self.endpoint, self.display_values, self.sysparm_query, self.sysparm_fields = get_parameters_from_config(config)
 
