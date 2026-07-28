@@ -1,4 +1,5 @@
 from safe_logger import SafeLogger
+import requests
 
 
 logger = SafeLogger("servicenow pagination", ["password"])
@@ -33,3 +34,11 @@ class ServiceNowPagination():
         if params:
             headers.update(params)
         return headers
+
+    def get_next_url_from_response(self, response):
+        next_url = None
+        if isinstance(response, requests.Response):
+            next_url = response.links.get("next")
+            if isinstance(next_url, dict):
+                next_url = next_url.get("url")
+        return next_url
