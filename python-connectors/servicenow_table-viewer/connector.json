@@ -95,6 +95,36 @@
             "description": "Display values",
             "type": "BOOLEAN",
             "defaultValue": true
+        },
+        {
+            "name": "advanced_parameters",
+            "label": " ",
+            "description": "Advanced parameters",
+            "type": "BOOLEAN",
+            "defaultValue": false
+        },
+        {
+            "name": "sysparm_query",
+            "label": "sysparm_query",
+            "type": "STRING",
+            "description": "Optional ServiceNow query string passed to the API",
+            "defaultValue": "ORDERBYDESCsys_created_on",
+            "visibilityCondition": "model.advanced_parameters==true"
+        },
+        {
+            "name": "sysparm_fields",
+            "label": "sysparm_fields",
+            "type": "STRING",
+            "description": "Optional comma-separated list of fields to return",
+            "visibilityCondition": "model.advanced_parameters==true"
+        },
+        {
+            "name": "page_size",
+            "label": "Page size",
+            "type": "INT",
+            "defaultValue": 10000,
+            "description": "Page size for paginated API calls",
+            "visibilityCondition": "model.advanced_parameters==true"
         }
     ]
 }

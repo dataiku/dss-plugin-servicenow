@@ -159,3 +159,23 @@ def is_valid_level(string_level):
         except Exception as error:
             logger.error("Could not convert level '{}' into int: {}".format(string_level, error))
     return False
+
+
+def get_parameters_from_config(config):
+    endpoint = config.get("endpoint", "incident")
+    if endpoint == "_dku_manual_setting":
+        endpoint = config.get("table_name", "incident")
+    display_values = config.get("display_values", False)  # True for new dataset, false for existing ones
+    sysparm_query = None
+    sysparm_fields = None
+    if config.get("advanced_parameters", False) is True:
+        sysparm_query = config.get("sysparm_query")
+        sysparm_fields = config.get("sysparm_fields")
+    return endpoint, display_values, sysparm_query, sysparm_fields
+
+
+def get_batch_size_from_config(config):
+    batch_size = None
+    if config.get("advanced_parameters", False) is True:
+        batch_size = config.get("page_size", None)
+    return batch_size
