@@ -1,5 +1,7 @@
 import requests
 from safe_logger import SafeLogger
+from datetime import datetime, timezone
+import time
 
 
 logger = SafeLogger("api-client")
@@ -74,11 +76,16 @@ class APIClient():
                 yield row
 
     def should_try_again(self, response):
+        if isinstance(response, requests.Response) and response.status_code == 429:
+            logger.warning("Error 429")
+            time_to_wait = get_retry_delay(response)
+            logger.warning("Sleeping {}s".format(time_to_wait))
+            time.sleep(time_to_wait)
+            return True
         if response is not None:
             self.number_of_retries = None
             return False
         if self.number_of_retries is None:
-            logger.warning("Retrying")
             self.number_of_retries = 1
         else:
             logger.warning("Retry {}".format(self.number_of_retries))
@@ -173,3 +180,25 @@ def extract_error_message(response):
         return
     except Exception:
         return
+
+
+def get_retry_delay(response):
+    """Parses Retry-After header and returns delay in seconds."""
+    retry_after = response.headers.get("Retry-After")
+    if not retry_after:
+        return 0.0
+
+    logger.warning("Retry after : {}".format(retry_after))
+    if retry_after.isdigit():
+        return float(retry_after)
+
+    try:
+        date_format = "%a, %d %b %Y %H:%M:%S GMT"
+        target_time = datetime.strptime(retry_after, date_format).replace(
+            tzinfo=timezone.utc
+        )
+        now = datetime.now(timezone.utc)
+        delay = (target_time - now).total_seconds()
+        return max(0.0, delay)  # Ensure delay isn't negative
+    except ValueError:
+        return 5.0  # Fallback if format is weird
