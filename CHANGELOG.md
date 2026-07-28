@@ -3,6 +3,8 @@
 ## [Version 0.0.13](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.13) - Feature release - 2026-07-16
 
 - Adding advanced parameters control on paging size, sysparm_query and sysparm_fields
+- Handling 429 retry-after
+- Updating the pagination mechanism
 
 ## [Version 0.0.12](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.12) - Bug fix and feature release - 2026-03-16
 
