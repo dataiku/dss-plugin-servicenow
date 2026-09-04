@@ -1,18 +1,45 @@
+import requests
 from safe_logger import SafeLogger
 from urllib.parse import urlparse
 
-logger = SafeLogger("servicenow plugin", ["password"])
+
+logger = SafeLogger("servicenow plugin", ["password", "client_secret"])
 
 
-def get_user_password_server_from_config(config):
+def get_server_from_config(config):
     auth_type = config.get("auth_type", "basic_per_user")
     credentials = config.get(auth_type, {})
     server_url = server_url_normalization(credentials.get("server_url", ""))
+    return server_url
+
+
+def get_auth_from_config(config):
+    auth_type = config.get("auth_type", "basic_per_user")
+    credentials = config.get(auth_type, {})
     if auth_type == "basic_per_user":
         basic_per_user = credentials.get("basic_per_user")
-        return basic_per_user.get("user", ""), basic_per_user.get("password", ""), server_url
+        return (basic_per_user.get("user", ""), basic_per_user.get("password", ""))
+    elif auth_type == "oauth_service_account":
+        server_url = server_url_normalization(credentials.get("server_url", ""))
+        token_url = "/".join([server_url, "oauth_token.do"])
+        response = requests.post(
+            token_url,
+            headers = {"Content-Type": "application/x-www-form-urlencoded"},
+            data = {
+                "grant_type": "client_credentials",
+                "client_id": credentials.get("client_id"),
+                "client_secret": credentials.get("client_secret")
+            }
+        )
+        if response.status_code >= 400:
+            logger.error("Error while retrieving access token: {}".format(response.content))
+            raise Exception("Error {}, could not retrieve the access token".format(response.status_code))
+        json_response = response.json()
+        access_token = json_response.get("access_token")
+        expires_in = json_response.get("expires_in")  # future use
+        return BearerTokenAuth(access_token=access_token)
     else:
-        return credentials.get("user", ""), credentials.get("password", ""), server_url
+        return (credentials.get("user", ""), credentials.get("password", ""))
 
 
 def server_url_normalization(raw_server_url):
@@ -179,3 +206,14 @@ def get_batch_size_from_config(config):
     if config.get("advanced_parameters", False) is True:
         batch_size = config.get("page_size", None)
     return batch_size
+
+
+class BearerTokenAuth(requests.auth.AuthBase):
+    def __init__(self, access_token=None):
+        self.access_token = access_token
+
+    def __call__(self, request):
+        request.headers["Authorization"] = "Bearer {}".format(
+            self.access_token
+        )
+        return request

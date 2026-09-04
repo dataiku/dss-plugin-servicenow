@@ -1,0 +1,32 @@
+{
+    "meta" : {
+        "label": "OAuth service accounts",
+        "description": "",
+        "icon": "icon-ticket dku-icon-servicenow"
+    },
+    "defaultDefinableInline": true,
+    "defaultDefinableAtProjectLevel": true,
+    "pluginParams": [
+    ],
+
+    "params": [
+        {
+            "name": "server_url",
+            "label": "Server URL",
+            "type": "STRING",
+            "description": "my_instance.service-now.com"
+        },
+        {
+            "name": "client_id",
+            "label": "Client ID",
+            "type": "STRING",
+            "description": ""
+        },
+        {
+            "name": "client_secret",
+            "label": "Client secret",
+            "type": "PASSWORD",
+            "description": ""
+        }
+    ]
+}
