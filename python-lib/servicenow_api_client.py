@@ -1,5 +1,5 @@
 import requests
-from safe_logger import SafeLogger
+from servicenow_safe_logger import SafeLogger
 
 
 logger = SafeLogger("api-client")

@@ -1,9 +1,10 @@
 from dataiku.llm.agent_tools import BaseAgentTool
 from servicenow_client import ServiceNowClient, is_sys_id
-from safe_logger import SafeLogger
+from servicenow_safe_logger import SafeLogger
+from servicenow_commons import SECRET_KEYS
 
 
-logger = SafeLogger("servicenow plugin", ["password"])
+logger = SafeLogger("servicenow plugin", SECRET_KEYS)
 
 
 class ServicenowCloseIncidentTool(BaseAgentTool):

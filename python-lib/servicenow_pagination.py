@@ -1,4 +1,4 @@
-from safe_logger import SafeLogger
+from servicenow_safe_logger import SafeLogger
 from servicenow_commons import SECRET_KEYS
 
 
