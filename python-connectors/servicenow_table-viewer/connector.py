@@ -1,10 +1,10 @@
 from dataiku.connector import Connector
 from servicenow_client import ServiceNowClient
-from servicenow_commons import RecordsLimit, get_parameters_from_config
+from servicenow_commons import RecordsLimit, get_parameters_from_config, SECRET_KEYS
 from safe_logger import SafeLogger
 
 
-logger = SafeLogger("servicenow plugin", ["password"])
+logger = SafeLogger("servicenow plugin", SECRET_KEYS)
 
 
 class ServiceNowConnector(Connector):
