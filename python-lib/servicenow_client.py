@@ -5,8 +5,8 @@ from servicenow_commons import (
     SECRET_KEYS
 )
 from servicenow_pagination import ServiceNowPagination
-from safe_logger import SafeLogger
-from api_client import APIClient
+from servicenow_safe_logger import SafeLogger
+from servicenow_api_client import APIClient
 
 
 MAX_NUMBER_OR_RETRIES = 3
