@@ -3,7 +3,10 @@ from safe_logger import SafeLogger
 from urllib.parse import urlparse
 
 
-logger = SafeLogger("servicenow plugin", ["password", "client_secret"])
+SECRET_KEYS = ["password", "client_secret", "access_token"]
+
+
+logger = SafeLogger("servicenow plugin", SECRET_KEYS)
 
 
 def get_server_from_config(config):
@@ -37,6 +40,10 @@ def get_auth_from_config(config):
         json_response = response.json()
         access_token = json_response.get("access_token")
         expires_in = json_response.get("expires_in")  # future use
+        return BearerTokenAuth(access_token=access_token)
+    elif auth_type == "oauth_sso":
+        server_url = server_url_normalization(credentials.get("server_url", ""))
+        access_token = credentials.get("access_token")
         return BearerTokenAuth(access_token=access_token)
     else:
         return (credentials.get("user", ""), credentials.get("password", ""))

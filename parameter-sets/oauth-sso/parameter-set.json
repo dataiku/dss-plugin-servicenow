@@ -1,0 +1,53 @@
+{
+    "meta" : {
+        "label": "SSO",
+        "description": "",
+        "icon": "icon-ticket dku-icon-servicenow"
+    },
+    "defaultDefinableInline": false,
+    "defaultDefinableAtProjectLevel": false,
+    "pluginParams": [
+    ],
+
+    "params": [
+        {
+            "name": "server_url",
+            "label": "Server URL",
+            "type": "STRING",
+            "description": "my_instance.service-now.com"
+        },
+        {
+            "name": "access_token",
+            "type": "CREDENTIAL_REQUEST",
+            "label": "ServiceNow SSO login",
+            "credentialRequestSettings": {
+                "type": "OAUTH2",
+                "authorizationEndpoint": " ",
+                "tokenEndpoint": " ",
+                "scope": " ",
+                "refreshTokenRotation": true
+            }
+        },
+        {
+            "name": "authorizationEndpoint",
+            "label": "Authorization endpoint",
+            "type": "STRING",
+            "description": "https://<<my_instance>>.service-now.com/oauth_token.do",
+            "mandatory": true
+        },
+        {
+            "name": "tokenEndpoint",
+            "label": "Token endpoint",
+            "type": "STRING",
+            "description": "https://<<my_instance>>.service-now.com/oauth_token.do",
+            "mandatory": true
+        },
+        {
+            "name": "scope",
+            "label": "Scope",
+            "type": "STRING",
+            "description": "",
+            "mandatory": false
+        }
+    ]
+}

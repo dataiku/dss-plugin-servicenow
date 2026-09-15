@@ -1,7 +1,8 @@
 import datetime
 from servicenow_commons import (
     is_valid_level, get_batch_size_from_config,
-    get_server_from_config, get_auth_from_config
+    get_server_from_config, get_auth_from_config,
+    SECRET_KEYS
 )
 from servicenow_pagination import ServiceNowPagination
 from safe_logger import SafeLogger
@@ -11,7 +12,7 @@ from api_client import APIClient
 MAX_NUMBER_OR_RETRIES = 3
 
 
-logger = SafeLogger("servicenow client", ["password"])
+logger = SafeLogger("servicenow client", SECRET_KEYS)
 
 
 ENDPOINTS_DETAILS = {

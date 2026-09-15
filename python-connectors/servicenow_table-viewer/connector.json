@@ -23,6 +23,10 @@
                 {
                     "value": "oauth_service_account",
                     "label": "OAuth service account"
+                },
+                {
+                    "value": "oauth_sso",
+                    "label": "OAuth SSO"
                 }
             ]
         },
@@ -46,6 +50,13 @@
             "type": "PRESET",
             "parameterSetId": "oauth-service-account",
             "visibilityCondition": "model.auth_type=='oauth_service_account'"
+        },
+        {
+            "name": "oauth_sso",
+            "label": "OAuth SSO",
+            "type": "PRESET",
+            "parameterSetId": "oauth-sso",
+            "visibilityCondition": "model.auth_type=='oauth_sso'"
         },
         {
             "name": "endpoint",
