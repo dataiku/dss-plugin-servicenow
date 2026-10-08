@@ -11,7 +11,7 @@ from api_client import APIClient
 MAX_NUMBER_OR_RETRIES = 3
 
 
-logger = SafeLogger("servicenow client", ["password"])
+logger = SafeLogger("servicenow client", ["password", "client_secret"])
 
 
 ENDPOINTS_DETAILS = {
@@ -72,7 +72,8 @@ class ServiceNowClient():
             server_url=self.server_url,
             auth=auth,
             pagination=ServiceNowPagination(batch_size=batch_size),
-            max_number_of_retries=MAX_NUMBER_OR_RETRIES
+            max_number_of_retries=MAX_NUMBER_OR_RETRIES,
+            should_fail_silently=False
         )
 
     def get_next_row(self, endpoint_name, search_parameters=None, params=None):

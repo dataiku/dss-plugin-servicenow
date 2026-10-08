@@ -1,0 +1,39 @@
+{
+    "meta" : {
+        "label": "OAuth Password Grant Flow",
+        "description": "",
+        "icon": "icon-ticket dku-icon-servicenow"
+    },
+    "defaultDefinableInline": false,
+    "defaultDefinableAtProjectLevel": false,
+    "pluginParams": [
+    ],
+
+    "params": [
+        {
+            "name": "server_url",
+            "label": "Server URL",
+            "type": "STRING",
+            "description": "my_instance.service-now.com"
+        },
+        {
+            "name": "basic_per_user",
+            "type": "CREDENTIAL_REQUEST",
+            "label": "ServiceNow basic login",
+            "credentialRequestSettings": {
+                "type": "BASIC"
+            }
+        },
+        {
+            "name": "client_id",
+            "label": "Client ID",
+            "type": "STRING",
+            "description": ""
+        },
+        {
+            "name": "client_secret",
+            "label": "Client secret",
+            "type": "PASSWORD"
+        }
+    ]
+}
