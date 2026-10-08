@@ -72,7 +72,8 @@ class ServiceNowClient():
             server_url=self.server_url,
             auth=auth,
             pagination=ServiceNowPagination(batch_size=batch_size),
-            max_number_of_retries=MAX_NUMBER_OR_RETRIES
+            max_number_of_retries=MAX_NUMBER_OR_RETRIES,
+            should_fail_silently=False
         )
 
     def get_next_row(self, endpoint_name, search_parameters=None, params=None):
