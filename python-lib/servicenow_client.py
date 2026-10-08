@@ -11,7 +11,7 @@ from api_client import APIClient
 MAX_NUMBER_OR_RETRIES = 3
 
 
-logger = SafeLogger("servicenow client", ["password"])
+logger = SafeLogger("servicenow client", ["password", "client_secret"])
 
 
 ENDPOINTS_DETAILS = {
