@@ -23,10 +23,6 @@
                 {
                     "value": "oauth_service_account",
                     "label": "OAuth service account"
-                },
-                {
-                    "value": "oauth_password_grant",
-                    "label": "OAuth password grant"
                 }
             ]
         },
@@ -50,13 +46,6 @@
             "type": "PRESET",
             "parameterSetId": "oauth-service-account",
             "visibilityCondition": "model.auth_type=='oauth_service_account'"
-        },
-        {
-            "name": "oauth_password_grant",
-            "label": "OAuth Password Grant",
-            "type": "PRESET",
-            "parameterSetId": "password-grant-flow",
-            "visibilityCondition": "model.auth_type=='oauth_password_grant'"
         },
         {
             "name": "endpoint",

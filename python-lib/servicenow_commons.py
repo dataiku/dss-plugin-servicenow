@@ -24,8 +24,8 @@ def get_auth_from_config(config):
         token_url = "/".join([server_url, "oauth_token.do"])
         response = requests.post(
             token_url,
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-            data={
+            headers = {"Content-Type": "application/x-www-form-urlencoded"},
+            data = {
                 "grant_type": "client_credentials",
                 "client_id": credentials.get("client_id"),
                 "client_secret": credentials.get("client_secret")

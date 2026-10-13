@@ -3,7 +3,7 @@ from servicenow_client import ServiceNowClient
 from safe_logger import SafeLogger
 
 
-logger = SafeLogger("servicenow plugin", ["password", "client_secret"])
+logger = SafeLogger("servicenow plugin", ["password"])
 
 
 class ServicenowUpdateStatusTool(BaseAgentTool):
