@@ -1,4 +1,4 @@
-from safe_logger import SafeLogger
+from servicenow_safe_logger import SafeLogger
 from urllib.parse import urlparse
 
 logger = SafeLogger("servicenow plugin", ["password"])

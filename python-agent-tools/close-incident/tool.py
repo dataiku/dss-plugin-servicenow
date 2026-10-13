@@ -1,6 +1,6 @@
 from dataiku.llm.agent_tools import BaseAgentTool
 from servicenow_client import ServiceNowClient, is_sys_id
-from safe_logger import SafeLogger
+from servicenow_safe_logger import SafeLogger
 
 
 logger = SafeLogger("servicenow plugin", ["password"])
