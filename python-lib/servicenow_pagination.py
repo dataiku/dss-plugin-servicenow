@@ -1,7 +1,7 @@
 from safe_logger import SafeLogger
 
 
-logger = SafeLogger("servicenow pagination", ["password"])
+logger = SafeLogger("servicenow pagination", ["password", "client_secret"])
 DEFAULT_PAGE_SIZE = 10000
 
 

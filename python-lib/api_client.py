@@ -27,7 +27,7 @@ class APIClient():
                 error_message = "Error on get: {}".format(error)
                 logger.error(error_message)
                 self.raise_if_necessary(error_message)
-        display_response_error(response)
+        display_response_error(response, can_raise=not self.should_fail_silently)
         json_response = response.json()
         return json_response
 
@@ -165,7 +165,7 @@ def extract_error_message(response):
         message = error.get("message")
         detail = error.get("detail")
         if detail:
-            return detail
+            return "{} {}".format(message, detail)
         elif message:
             return message
         elif error:
