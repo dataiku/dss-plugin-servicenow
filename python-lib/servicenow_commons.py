@@ -37,8 +37,32 @@ def get_auth_from_config(config):
         access_token = json_response.get("access_token")
         expires_in = json_response.get("expires_in")  # future use
         return BearerTokenAuth(access_token=access_token)
+    elif auth_type == "oauth_password_grant":
+        basic_per_user = credentials.get("basic_per_user", {})
+        if not basic_per_user:
+            raise Exception("The username / password is not set for this preset x Dataiku user")
+        access_token, expires_in, refresh_token = get_access_token_from_password_grant(
+            credentials.get("server_url", ""),
+            credentials.get("client_id"),
+            credentials.get("client_secret"),
+            basic_per_user.get("user", ""),
+            basic_per_user.get("password", "")
+        )
+        return BearerTokenAuth(access_token=access_token)
     else:
-        return (credentials.get("user", ""), credentials.get("password", ""))
+        client_id = credentials.get("client_id")
+        client_secret = credentials.get("client_secret")
+        if client_id and client_secret:
+            access_token, expires_in, refresh_token = get_access_token_from_password_grant(
+                credentials.get("server_url", ""),
+                credentials.get("client_id"),
+                credentials.get("client_secret"),
+                credentials.get("user", ""),
+                credentials.get("password", "")
+            )
+            return BearerTokenAuth(access_token=access_token)
+        else:
+            return (credentials.get("user", ""), credentials.get("password", ""))
 
 
 def server_url_normalization(raw_server_url):
@@ -205,6 +229,32 @@ def get_batch_size_from_config(config):
     if config.get("advanced_parameters", False) is True:
         batch_size = config.get("page_size", None)
     return batch_size
+
+
+def get_access_token_from_password_grant(server_url, client_id, client_secret, username, password):
+    server_url = server_url_normalization(server_url)
+    token_url = "/".join([server_url, "oauth_token.do"])
+    response = requests.post(
+        token_url,
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        data={
+            "grant_type": "password",
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "username": username,
+            "password": password
+        }
+    )
+    if response.status_code >= 400:
+        logger.error("Error while retrieving access token: {}".format(response.content))
+        raise Exception("Error {}, could not retrieve the access token".format(response.status_code))
+    json_response = response.json()
+    if "error" in json_response:
+        raise Exception("Error while login in: {} {}".format(json_response.get("error_description", ""), json_response.get("error", "")))
+    access_token = json_response.get("access_token")
+    expires_in = json_response.get("expires_in")  # future use
+    refresh_token = json_response.get("refresh_token")  # future use
+    return access_token, expires_in, refresh_token
 
 
 class BearerTokenAuth(requests.auth.AuthBase):
