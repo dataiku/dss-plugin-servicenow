@@ -27,6 +27,17 @@
             "label": "Password",
             "type": "PASSWORD",
             "description": ""
+        },
+        {
+            "name": "client_id",
+            "label": "Client ID",
+            "type": "STRING",
+            "description": ""
+        },
+        {
+            "name": "client_secret",
+            "label": "Client secret",
+            "type": "PASSWORD"
         }
     ]
 }
