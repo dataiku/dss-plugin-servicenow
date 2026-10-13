@@ -2,7 +2,7 @@ import requests
 from servicenow_safe_logger import SafeLogger
 from urllib.parse import urlparse
 
-logger = SafeLogger("servicenow plugin", ["password", "client_secret"])
+logger = SafeLogger("servicenow plugin", ["password", "client_secret", "access_token"])
 
 
 def get_server_from_config(config):
@@ -18,6 +18,10 @@ def get_auth_from_config(config):
     if auth_type == "basic_per_user":
         basic_per_user = credentials.get("basic_per_user")
         return (basic_per_user.get("user", ""), basic_per_user.get("password", ""))
+    elif auth_type == "oauth_sso":
+        server_url = server_url_normalization(credentials.get("server_url", ""))
+        access_token = credentials.get("access_token")
+        return BearerTokenAuth(access_token=access_token)
     elif auth_type == "oauth_service_account":
         server_url = server_url_normalization(credentials.get("server_url", ""))
         token_url = "/".join([server_url, "oauth_token.do"])
