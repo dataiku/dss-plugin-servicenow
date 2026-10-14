@@ -1,5 +1,8 @@
 import datetime
-from servicenow_commons import get_user_password_server_from_config, is_valid_level, get_batch_size_from_config
+from servicenow_commons import (
+    is_valid_level, get_batch_size_from_config,
+    get_server_from_config, get_auth_from_config
+)
 from servicenow_pagination import ServiceNowPagination
 from safe_logger import SafeLogger
 from api_client import APIClient
@@ -62,11 +65,12 @@ def get_sn_endpoint_details(endpoint_name):
 
 class ServiceNowClient():
     def __init__(self, config):
-        user, password, self.server_url = get_user_password_server_from_config(config)
+        self.server_url = get_server_from_config(config)
+        auth = get_auth_from_config(config)
         batch_size = get_batch_size_from_config(config)
         self.client = APIClient(
             server_url=self.server_url,
-            auth=(user, password),
+            auth=auth,
             pagination=ServiceNowPagination(batch_size=batch_size),
             max_number_of_retries=MAX_NUMBER_OR_RETRIES
         )

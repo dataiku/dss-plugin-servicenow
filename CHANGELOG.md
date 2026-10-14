@@ -1,5 +1,9 @@
 # Changelog
 
+## [Version 0.0.14](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.14) - Feature release - 2026-08-04
+
+- Adding a OAuth service account preset
+
 ## [Version 0.0.13](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.13) - Feature release - 2026-07-16
 
 - Adding advanced parameters control on paging size, sysparm_query and sysparm_fields
