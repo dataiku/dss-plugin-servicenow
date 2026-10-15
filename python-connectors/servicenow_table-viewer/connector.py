@@ -1,17 +1,17 @@
 from dataiku.connector import Connector
 from servicenow_client import ServiceNowClient
 from servicenow_commons import RecordsLimit, get_parameters_from_config
-from safe_logger import SafeLogger
+from servicenow_safe_logger import SafeLogger
 
 
-logger = SafeLogger("servicenow plugin", ["password"])
+logger = SafeLogger("servicenow plugin", ["password", "client_secret"])
 
 
 class ServiceNowConnector(Connector):
 
     def __init__(self, config, plugin_config):
         Connector.__init__(self, config, plugin_config)
-        logger.info("Starting ServiceNow plugin v0.0.13 with config:{}".format(logger.filter_secrets(config)))
+        logger.info("Starting ServiceNow plugin v0.0.14 with config:{}".format(logger.filter_secrets(config)))
         self.client = ServiceNowClient(config)
         self.endpoint, self.display_values, self.sysparm_query, self.sysparm_fields = get_parameters_from_config(config)
 

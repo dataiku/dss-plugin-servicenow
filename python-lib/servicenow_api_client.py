@@ -1,5 +1,5 @@
 import requests
-from safe_logger import SafeLogger
+from servicenow_safe_logger import SafeLogger
 
 
 logger = SafeLogger("api-client")
@@ -27,7 +27,7 @@ class APIClient():
                 error_message = "Error on get: {}".format(error)
                 logger.error(error_message)
                 self.raise_if_necessary(error_message)
-        display_response_error(response)
+        display_response_error(response, can_raise=not self.should_fail_silently)
         json_response = response.json()
         return json_response
 
