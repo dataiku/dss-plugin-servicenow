@@ -64,7 +64,6 @@ class APIClient():
 
     def get_next_row(self, endpoint, data_path=None, **kwargs):
         response = None
-        items_retrieved = 0
         next_url = self.get_full_url(endpoint)
         initial_params = kwargs.pop("params", {})
         params = self.pagination.get_paging_parameters(initial_params)
@@ -73,9 +72,7 @@ class APIClient():
             params = None
             next_url = self.pagination.get_next_url_from_response(response)
             json_response = response.json()
-            items_retrieved = 0
             for row in get_next_row_from_response(json_response, data_path):
-                items_retrieved += 1
                 yield row
 
     def should_try_again(self, response):
@@ -130,19 +127,13 @@ class DefaultPagination():
         self.is_first_call = True
         pass
 
-    def has_next_page(self, response, items_retrieved):
-        logger.info("DefaultPagination:has_next_page")
-        self.is_first_call = False
-        if response is None:
-            logger.info("DefaultPagination:has_next_page initialisation")
-            return True
-        logger.info("DefaultPagination:has_next_page Stop here")
-        return False
-
     def get_paging_parameters(self, params=None):
         logger.info("DefaultPagination:get_paging_parameters")
         if self.is_first_call:
             return params
+        return None
+
+    def get_next_url_from_response(self):
         return None
 
 

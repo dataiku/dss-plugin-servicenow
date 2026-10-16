@@ -241,26 +241,12 @@ def get_batch_size_from_config(config):
 
 
 def get_access_token_from_service_account(server_url, client_id, client_secret):
-    server_url = server_url_normalization(server_url)
-    token_url = "/".join([server_url, "oauth_token.do"])
-    response = requests.post(
-        token_url,
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
-        data={
+    return request_access_token(server_url, {
             "grant_type": "client_credentials",
             "client_id": client_id,
             "client_secret": client_secret
         }
     )
-    if response.status_code >= 400:
-        logger.error("Error while retrieving access token: {}".format(response.content))
-        raise Exception("Error {}, could not retrieve the access token".format(response.status_code))
-    json_response = response.json()
-    assert_no_error(json_response)
-    access_token = json_response.get("access_token")
-    expires_in = json_response.get("expires_in")
-    refresh_token = json_response.get("refresh_token")
-    return access_token, expires_in, refresh_token
 
 
 def get_access_token_from_password_grant(server_url, client_id, client_secret, username, password):
@@ -307,6 +293,9 @@ def assert_no_error(json_response):
 
 
 class BearerTokenAuth(requests.auth.AuthBase):
+    MAX_REFRESH_MARGIN_SECONDS = 60
+    REFRESH_MARGIN_RATIO = 0.1
+
     def __init__(self, access_token=None, token_provider=None, token_refresher=None):
         self.access_token = access_token
         self.token_provider = token_provider
@@ -326,7 +315,8 @@ class BearerTokenAuth(requests.auth.AuthBase):
         refresh_at = None
         if expires_in is not None:
             lifetime = float(expires_in)
-            refresh_at = requested_at + lifetime - min(60, lifetime * 0.1)
+            refresh_margin = min(self.MAX_REFRESH_MARGIN_SECONDS, lifetime * self.REFRESH_MARGIN_RATIO)
+            refresh_at = requested_at + lifetime - refresh_margin
         self.access_token = access_token
         if refresh_token:
             self.refresh_token = refresh_token
