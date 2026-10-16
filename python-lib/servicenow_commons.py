@@ -1,4 +1,7 @@
 import requests
+from functools import partial
+from threading import Lock
+from time import monotonic
 from servicenow_safe_logger import SafeLogger
 from urllib.parse import urlparse
 
@@ -19,52 +22,57 @@ def get_auth_from_config(config):
         basic_per_user = credentials.get("basic_per_user")
         return (basic_per_user.get("user", ""), basic_per_user.get("password", ""))
     elif auth_type == "oauth_sso":
-        server_url = server_url_normalization(credentials.get("server_url", ""))
         access_token = credentials.get("access_token")
         return BearerTokenAuth(access_token=access_token)
     elif auth_type == "oauth_service_account":
-        server_url = server_url_normalization(credentials.get("server_url", ""))
-        token_url = "/".join([server_url, "oauth_token.do"])
-        response = requests.post(
-            token_url,
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-            data={
-                "grant_type": "client_credentials",
-                "client_id": credentials.get("client_id"),
-                "client_secret": credentials.get("client_secret")
-            }
+        return BearerTokenAuth(
+            token_provider=partial(
+                get_access_token_from_service_account,
+                credentials.get("server_url", ""),
+                credentials.get("client_id"),
+                credentials.get("client_secret")
+            )
         )
-        if response.status_code >= 400:
-            logger.error("Error while retrieving access token: {}".format(response.content))
-            raise Exception("Error {}, could not retrieve the access token".format(response.status_code))
-        json_response = response.json()
-        access_token = json_response.get("access_token")
-        expires_in = json_response.get("expires_in")  # future use
-        return BearerTokenAuth(access_token=access_token)
     elif auth_type == "oauth_password_grant":
         basic_per_user = credentials.get("basic_per_user", {})
         if not basic_per_user:
             raise Exception("The username / password is not set for this preset x Dataiku user")
-        access_token, expires_in, refresh_token = get_access_token_from_password_grant(
-            credentials.get("server_url", ""),
-            credentials.get("client_id"),
-            credentials.get("client_secret"),
-            basic_per_user.get("user", ""),
-            basic_per_user.get("password", "")
+        return BearerTokenAuth(
+            token_provider=partial(
+                get_access_token_from_password_grant,
+                credentials.get("server_url", ""),
+                credentials.get("client_id"),
+                credentials.get("client_secret"),
+                basic_per_user.get("user", ""),
+                basic_per_user.get("password", "")
+            ),
+            token_refresher=partial(
+                get_access_token_from_refresh_token,
+                credentials.get("server_url", ""),
+                credentials.get("client_id"),
+                credentials.get("client_secret")
+            )
         )
-        return BearerTokenAuth(access_token=access_token)
     else:
         client_id = credentials.get("client_id")
         client_secret = credentials.get("client_secret")
         if client_id and client_secret:
-            access_token, expires_in, refresh_token = get_access_token_from_password_grant(
-                credentials.get("server_url", ""),
-                credentials.get("client_id"),
-                credentials.get("client_secret"),
-                credentials.get("user", ""),
-                credentials.get("password", "")
+            return BearerTokenAuth(
+                token_provider=partial(
+                    get_access_token_from_password_grant,
+                    credentials.get("server_url", ""),
+                    credentials.get("client_id"),
+                    credentials.get("client_secret"),
+                    credentials.get("user", ""),
+                    credentials.get("password", "")
+                ),
+                token_refresher=partial(
+                    get_access_token_from_refresh_token,
+                    credentials.get("server_url", ""),
+                    credentials.get("client_id"),
+                    credentials.get("client_secret")
+                )
             )
-            return BearerTokenAuth(access_token=access_token)
         else:
             return (credentials.get("user", ""), credentials.get("password", ""))
 
@@ -235,38 +243,93 @@ def get_batch_size_from_config(config):
     return batch_size
 
 
+def get_access_token_from_service_account(server_url, client_id, client_secret):
+    return request_access_token(server_url, {
+            "grant_type": "client_credentials",
+            "client_id": client_id,
+            "client_secret": client_secret
+        }
+    )
+
+
 def get_access_token_from_password_grant(server_url, client_id, client_secret, username, password):
+    return request_access_token(server_url, {
+        "grant_type": "password",
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "username": username,
+        "password": password
+    })
+
+
+def get_access_token_from_refresh_token(server_url, client_id, client_secret, refresh_token):
+    return request_access_token(server_url, {
+        "grant_type": "refresh_token",
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "refresh_token": refresh_token
+    })
+
+
+def request_access_token(server_url, data):
     server_url = server_url_normalization(server_url)
     token_url = "/".join([server_url, "oauth_token.do"])
     response = requests.post(
         token_url,
         headers={"Content-Type": "application/x-www-form-urlencoded"},
-        data={
-            "grant_type": "password",
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "username": username,
-            "password": password
-        }
+        data=data
     )
     if response.status_code >= 400:
         logger.error("Error while retrieving access token: {}".format(response.content))
         raise Exception("Error {}, could not retrieve the access token".format(response.status_code))
     json_response = response.json()
-    if "error" in json_response:
-        raise Exception("Error while login in: {} {}".format(json_response.get("error_description", ""), json_response.get("error", "")))
+    assert_no_error(json_response)
     access_token = json_response.get("access_token")
-    expires_in = json_response.get("expires_in")  # future use
-    refresh_token = json_response.get("refresh_token")  # future use
+    expires_in = json_response.get("expires_in")
+    refresh_token = json_response.get("refresh_token")
     return access_token, expires_in, refresh_token
 
 
+def assert_no_error(json_response):
+    if "error" in json_response:
+        raise Exception("Error while login in: {} {}".format(json_response.get("error_description", ""), json_response.get("error", "")))
+
+
 class BearerTokenAuth(requests.auth.AuthBase):
-    def __init__(self, access_token=None):
+    MAX_REFRESH_MARGIN_SECONDS = 60
+    REFRESH_MARGIN_RATIO = 0.1
+
+    def __init__(self, access_token=None, token_provider=None, token_refresher=None):
         self.access_token = access_token
+        self.token_provider = token_provider
+        self.token_refresher = token_refresher
+        self.refresh_token = None
+        self.refresh_at = None
+        self.lock = Lock()
+        if self.token_provider is not None:
+            self.refresh_access_token()
+
+    def refresh_access_token(self):
+        requested_at = monotonic()
+        if self.refresh_token and self.token_refresher is not None:
+            access_token, expires_in, refresh_token = self.token_refresher(self.refresh_token)
+        else:
+            access_token, expires_in, refresh_token = self.token_provider()
+        refresh_at = None
+        if expires_in is not None:
+            lifetime = float(expires_in)
+            refresh_margin = min(self.MAX_REFRESH_MARGIN_SECONDS, lifetime * self.REFRESH_MARGIN_RATIO)
+            refresh_at = requested_at + lifetime - refresh_margin
+        self.access_token = access_token
+        if refresh_token:
+            self.refresh_token = refresh_token
+        self.refresh_at = refresh_at
 
     def __call__(self, request):
-        request.headers["Authorization"] = "Bearer {}".format(
-            self.access_token
-        )
+        with self.lock:
+            if self.token_provider is not None and self.refresh_at is not None and monotonic() >= self.refresh_at:
+                self.refresh_access_token()
+            request.headers["Authorization"] = "Bearer {}".format(
+                self.access_token
+            )
         return request

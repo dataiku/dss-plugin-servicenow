@@ -1,7 +1,6 @@
 import requests
 from servicenow_safe_logger import SafeLogger
 
-
 logger = SafeLogger("api-client")
 
 
@@ -16,8 +15,8 @@ class APIClient():
         self.max_number_of_retries = max_number_of_retries or 1
         self.should_fail_silently = should_fail_silently
 
-    def get(self, endpoint, **kwargs):
-        full_url = self.get_full_url(endpoint)
+    def get(self, endpoint, full_url=None, raw_response=False, **kwargs):
+        full_url = full_url or self.get_full_url(endpoint)
         response = None
         while self.should_try_again(response):
             try:
@@ -28,6 +27,8 @@ class APIClient():
                 logger.error(error_message)
                 self.raise_if_necessary(error_message)
         display_response_error(response, can_raise=not self.should_fail_silently)
+        if raw_response is True:
+            return response
         json_response = response.json()
         return json_response
 
@@ -63,14 +64,15 @@ class APIClient():
 
     def get_next_row(self, endpoint, data_path=None, **kwargs):
         response = None
-        items_retrieved = 0
-        while self.pagination.has_next_page(response, items_retrieved):
-            initial_params = kwargs.pop("params", {})
-            params = self.pagination.get_paging_parameters(initial_params)
-            response = self.get(endpoint, params=params, **kwargs)
-            items_retrieved = 0
-            for row in get_next_row_from_response(response, data_path):
-                items_retrieved += 1
+        next_url = self.get_full_url(endpoint)
+        initial_params = kwargs.pop("params", {})
+        params = self.pagination.get_paging_parameters(initial_params)
+        while next_url:
+            response = self.get(None, full_url=next_url, raw_response=True, params=params, **kwargs)
+            params = None
+            next_url = self.pagination.get_next_url_from_response(response)
+            json_response = response.json()
+            for row in get_next_row_from_response(json_response, data_path):
                 yield row
 
     def should_try_again(self, response):
@@ -125,19 +127,13 @@ class DefaultPagination():
         self.is_first_call = True
         pass
 
-    def has_next_page(self, response, items_retrieved):
-        logger.info("DefaultPagination:has_next_page")
-        self.is_first_call = False
-        if response is None:
-            logger.info("DefaultPagination:has_next_page initialisation")
-            return True
-        logger.info("DefaultPagination:has_next_page Stop here")
-        return False
-
     def get_paging_parameters(self, params=None):
         logger.info("DefaultPagination:get_paging_parameters")
         if self.is_first_call:
             return params
+        return None
+
+    def get_next_url_from_response(self):
         return None
 
 
