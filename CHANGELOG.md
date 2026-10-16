@@ -1,10 +1,13 @@
 # Changelog
 
+## [Version 0.0.15](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.15) - Feature release - 2026-10-16
+
+- Adding a OAuth Password Grant Flow preset
+- Enabling OAuth Password Grant Flow in service account preset
+
 ## [Version 0.0.14](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.14) - Feature release - 2026-10-13
 
 - Adding a OAuth service account preset
-- Adding a OAuth Password Grant Flow preset
-- Enabling OAuth Password Grant Flow in service account preset
 - Renaming libraries against name collisions
 
 ## [Version 0.0.13](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.13) - Feature release - 2026-07-16
