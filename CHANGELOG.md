@@ -5,6 +5,7 @@
 - Fix pagination
 - Adding a OAuth Password Grant Flow preset
 - Enabling OAuth Password Grant Flow in service account preset
+- Adding an empty OAuth Single Sign On preset
 
 ## [Version 0.0.14](https://github.com/dataiku/dss-plugin-servicenow/releases/tag/v0.0.14) - Feature release - 2026-10-13
 

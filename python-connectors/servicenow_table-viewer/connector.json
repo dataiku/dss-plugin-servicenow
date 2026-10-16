@@ -27,6 +27,10 @@
                 {
                     "value": "oauth_password_grant",
                     "label": "OAuth password grant"
+                },
+                {
+                    "value": "oauth_sso",
+                    "label": "OAuth SSO"
                 }
             ]
         },
@@ -57,6 +61,13 @@
             "type": "PRESET",
             "parameterSetId": "password-grant-flow",
             "visibilityCondition": "model.auth_type=='oauth_password_grant'"
+        },
+        {
+            "name": "oauth_sso",
+            "label": "OAuth SSO",
+            "type": "PRESET",
+            "parameterSetId": "oauth-sso",
+            "visibilityCondition": "model.auth_type=='oauth_sso'"
         },
         {
             "name": "endpoint",
