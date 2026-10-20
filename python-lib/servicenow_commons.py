@@ -5,7 +5,7 @@ from time import monotonic
 from servicenow_safe_logger import SafeLogger
 from urllib.parse import urlparse
 
-logger = SafeLogger("servicenow plugin", ["password", "client_secret"])
+logger = SafeLogger("servicenow plugin", ["password", "client_secret", "access_token"])
 
 
 def get_server_from_config(config):
@@ -21,6 +21,10 @@ def get_auth_from_config(config):
     if auth_type == "basic_per_user":
         basic_per_user = credentials.get("basic_per_user")
         return (basic_per_user.get("user", ""), basic_per_user.get("password", ""))
+    elif auth_type == "oauth_sso":
+        if "__credentials" in credentials:
+            return OAuthSSOTokenAuth(credentials["__credentials"]["access_token"])
+        return BearerTokenAuth(access_token=credentials.get("access_token"))
     elif auth_type == "oauth_service_account":
         return BearerTokenAuth(
             token_provider=partial(
@@ -290,6 +294,19 @@ def request_access_token(server_url, data):
 def assert_no_error(json_response):
     if "error" in json_response:
         raise Exception("Error while login in: {} {}".format(json_response.get("error_description", ""), json_response.get("error", "")))
+
+
+class OAuthSSOTokenAuth(requests.auth.AuthBase):
+    def __init__(self, credentials):
+        from dataiku.core.plugin import OAuthCredentials
+
+        self.credentials = OAuthCredentials(credentials)
+        self.lock = Lock()
+
+    def __call__(self, request):
+        with self.lock:
+            request.headers["Authorization"] = "Bearer {}".format(self.credentials.access_token)
+        return request
 
 
 class BearerTokenAuth(requests.auth.AuthBase):

@@ -3,7 +3,7 @@ from servicenow_client import ServiceNowClient, is_sys_id
 from servicenow_safe_logger import SafeLogger
 
 
-logger = SafeLogger("servicenow plugin", ["password", "client_secret"])
+logger = SafeLogger("servicenow plugin", ["password", "client_secret", "access_token"])
 
 
 class ServicenowCloseIncidentTool(BaseAgentTool):
