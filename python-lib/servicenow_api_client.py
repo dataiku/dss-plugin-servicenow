@@ -1,7 +1,6 @@
 import requests
 from servicenow_safe_logger import SafeLogger
 
-
 logger = SafeLogger("api-client")
 
 
@@ -165,7 +164,7 @@ def extract_error_message(response):
         message = error.get("message")
         detail = error.get("detail")
         if detail:
-            return detail
+            return "{} {}".format(message, detail)
         elif message:
             return message
         elif error:
